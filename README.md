@@ -1,4 +1,4 @@
-#Informacijski sustavi
+# Informacijski sustavi
 
 ## Naziv projekta
 - Sustav upravljanja ugostiteljskim objektom
