@@ -1,0 +1,88 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36" scale="1" border="100" version="26.1.3">
+  <diagram name="Page-1" id="kxrtQBPMnSYleZCFBnPV">
+    <mxGraphModel dx="1512" dy="1145" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="YCWfUdo7x6KPriQirSMr-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="YCWfUdo7x6KPriQirSMr-20" target="YCWfUdo7x6KPriQirSMr-27" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-37" value="Narudžba&lt;div&gt;za&lt;/div&gt;&lt;div&gt;pripremu&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="YCWfUdo7x6KPriQirSMr-32" vertex="1" connectable="0">
+          <mxGeometry x="0.0118" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-20" value="1. Upravljanje narudžbama&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;fontColor=#333333;strokeColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="-440" y="-160" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-21" value="2. Upravljanje rezervacijama" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;fontColor=#333333;strokeColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="-440" y="-40" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="YCWfUdo7x6KPriQirSMr-22" target="YCWfUdo7x6KPriQirSMr-28" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-39" value="Narudžba&amp;nbsp;&lt;div&gt;dobavljaču&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="YCWfUdo7x6KPriQirSMr-33" vertex="1" connectable="0">
+          <mxGeometry x="-0.0408" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-22" value="3. Upravljanje zalihama i nabavom" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;fontColor=#333333;strokeColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="-440" y="80" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-23" value="4. Upravljanje zaposlenicima" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;fontColor=#333333;strokeColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="-440" y="200" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-24" value="5. Generiranje izvještaja" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;fontColor=#333333;strokeColor=#666666;" parent="1" vertex="1">
+          <mxGeometry x="-440" y="320" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="YCWfUdo7x6KPriQirSMr-25" target="YCWfUdo7x6KPriQirSMr-20" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-36" value="Unos&lt;div&gt;narudžbe&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="YCWfUdo7x6KPriQirSMr-30" vertex="1" connectable="0">
+          <mxGeometry x="0.0079" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-25" value="Konobar" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-760" y="-160" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="YCWfUdo7x6KPriQirSMr-26" target="YCWfUdo7x6KPriQirSMr-21" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-38" value="Zahtjev za&lt;div&gt;rezervaciju&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="YCWfUdo7x6KPriQirSMr-31" vertex="1" connectable="0">
+          <mxGeometry x="-0.0798" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-26" value="Gost" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-760" y="-40" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-27" value="Kuhinjsko osoblje" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry y="-160" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-28" value="Dobavljač" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry y="80" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="YCWfUdo7x6KPriQirSMr-29" target="YCWfUdo7x6KPriQirSMr-23" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-40" value="Upravljanje&lt;div&gt;zaposlenicima&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="YCWfUdo7x6KPriQirSMr-34" vertex="1" connectable="0">
+          <mxGeometry x="0.1678" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="YCWfUdo7x6KPriQirSMr-29" target="YCWfUdo7x6KPriQirSMr-24" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-41" value="Zahtjev za&amp;nbsp;&lt;div&gt;izvještaj&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="YCWfUdo7x6KPriQirSMr-35" vertex="1" connectable="0">
+          <mxGeometry x="0.0439" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-29" value="Vlasnik / Menadžer" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-760" y="260" width="160" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

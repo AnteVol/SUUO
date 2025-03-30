@@ -1,0 +1,142 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36" scale="1" border="100" version="26.1.3">
+  <diagram name="Page-1" id="kxrtQBPMnSYleZCFBnPV">
+    <mxGraphModel dx="2312" dy="2745" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="YCWfUdo7x6KPriQirSMr-171" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="-1490" y="-1910" width="3300" height="1930" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-136" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-123" target="YCWfUdo7x6KPriQirSMr-124" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-137" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-123" target="YCWfUdo7x6KPriQirSMr-125" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-123" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;0. Sustav za upravljanje ugostiteljskih objekata (SUUO)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="1266.5492957746476" width="418.3098591549296" height="203.15789473684214" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-132" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-124" target="YCWfUdo7x6KPriQirSMr-126" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-133" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-124" target="YCWfUdo7x6KPriQirSMr-127" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-134" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-124" target="YCWfUdo7x6KPriQirSMr-128" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-124" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;Izvještavanje i narudžbe korisnika&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="371.83098591549293" y="609.4736842105264" width="418.3098591549296" height="203.15789473684214" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-142" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-125" target="YCWfUdo7x6KPriQirSMr-138" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-143" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-125" target="YCWfUdo7x6KPriQirSMr-139" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-144" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-125" target="YCWfUdo7x6KPriQirSMr-140" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-145" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-125" target="YCWfUdo7x6KPriQirSMr-141" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-125" value="&lt;font style=&quot;font-size: 36px;&quot;&gt; Operativne funkcije djelatnika&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="2149.6478873239435" y="609.4736842105264" width="418.3098591549296" height="203.15789473684214" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-126" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;Izrada narudžbe&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry y="1218.9473684210527" width="325.3521126760563" height="203.15789473684214" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-127" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;Prikaz jelovnika&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="418.3098591549296" y="1218.9473684210527" width="325.3521126760563" height="203.15789473684214" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-128" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;Rezervacija stola&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="836.6197183098592" y="1218.9473684210527" width="325.3521126760563" height="203.15789473684214" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-158" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-138" target="YCWfUdo7x6KPriQirSMr-155" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-159" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-138" target="YCWfUdo7x6KPriQirSMr-156" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-160" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-138" target="YCWfUdo7x6KPriQirSMr-157" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-138" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;Upravljanje narudžbama&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="1493.1338028169012" y="1218.9473684210527" width="325.3521126760563" height="203.15789473684214" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-161" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-139" target="YCWfUdo7x6KPriQirSMr-146" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-162" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-139" target="YCWfUdo7x6KPriQirSMr-147" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-163" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-139" target="YCWfUdo7x6KPriQirSMr-148" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-139" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;Upravljanje zalihama&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="1969.5422535211264" y="1218.9473684210527" width="325.3521126760563" height="203.15789473684214" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-164" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-140" target="YCWfUdo7x6KPriQirSMr-149" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-165" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-140" target="YCWfUdo7x6KPriQirSMr-150" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-166" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-140" target="YCWfUdo7x6KPriQirSMr-151" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-140" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;Upravljanje osobljem&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="2445.950704225352" y="1218.9473684210527" width="325.3521126760563" height="203.15789473684214" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-167" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-141" target="YCWfUdo7x6KPriQirSMr-152" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-168" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-141" target="YCWfUdo7x6KPriQirSMr-153" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-169" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=none;startFill=0;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" source="YCWfUdo7x6KPriQirSMr-141" target="YCWfUdo7x6KPriQirSMr-154" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-141" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;Upravljanje izvještajima&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="2922.359154929577" y="1218.9473684210527" width="325.3521126760563" height="203.15789473684214" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-146" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Provjera dostupnosti&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="1928.8732394366193" y="1828.4210526315792" width="127.8169014084507" height="101.57894736842107" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-147" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Ažuriranje količina&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="2068.309859154929" y="1828.4210526315792" width="127.8169014084507" height="101.57894736842107" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-148" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Automatska narudžba dobavljaču&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="2207.7464788732395" y="1828.4210526315792" width="139.43661971830986" height="101.57894736842107" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-149" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Dodavanje zaposlenika&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="2405.2816901408446" y="1828.4210526315792" width="127.8169014084507" height="101.57894736842107" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-150" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Uređivanje podataka&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="2544.7183098591545" y="1828.4210526315792" width="127.8169014084507" height="101.57894736842107" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-151" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Upravljanje ulogama&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="2684.1549295774644" y="1828.4210526315792" width="139.43661971830986" height="101.57894736842107" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-152" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Pregled statistike&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="2881.69014084507" y="1828.4210526315792" width="127.8169014084507" height="101.57894736842107" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-153" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Generiranje izvještaja&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="3021.12676056338" y="1828.4210526315792" width="127.8169014084507" height="101.57894736842107" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-154" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Izvoz podataka&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="3160.5633802816897" y="1828.4210526315792" width="139.43661971830986" height="101.57894736842107" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-155" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Unos nove narudžbe&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="1452.4647887323943" y="1828.4210526315792" width="127.8169014084507" height="101.57894736842107" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-156" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Potvrda narudžbe&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="1591.9014084507041" y="1828.4210526315792" width="127.8169014084507" height="101.57894736842107" as="geometry" />
+        </mxCell>
+        <mxCell id="YCWfUdo7x6KPriQirSMr-157" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Prikaz narudžbe kuhinji&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" parent="YCWfUdo7x6KPriQirSMr-171" vertex="1">
+          <mxGeometry x="1731.3380281690138" y="1828.4210526315792" width="139.43661971830986" height="101.57894736842107" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
