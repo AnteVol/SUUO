@@ -18,7 +18,7 @@ cursor.execute("""
 
 CREATE TABLE zaposlenik (
     zaposlenikId INT PRIMARY KEY IDENTITY(1,1),
-    pozicijaId INT NOT NULL,
+    pozicijaId INT,
     ime VARCHAR(15) NOT NULL,
     prezime VARCHAR(30) NOT NULL,
     email VARCHAR(100) NULL,
@@ -69,6 +69,15 @@ CREATE TABLE namirnica (
     jedinicaMjere VARCHAR(20) NOT NULL,
     dostupnaKolicina FLOAT NOT NULL,
     minimalnaKolicina FLOAT NULL
+);
+
+CREATE TABLE recept (
+    receptId INT PRIMARY KEY IDENTITY(1,1),
+    stavkaJelovnikaId INT NOT NULL,
+    namirnicaId INT NOT NULL,
+    kolicina FLOAT NOT NULL,
+    FOREIGN KEY (stavkaJelovnikaId) REFERENCES stavkaJelovnika(stavkaJelovnikaId),
+    FOREIGN KEY (namirnicaId) REFERENCES namirnica(namirnicaId)
 );
 
 CREATE TABLE trenutniStatus (
@@ -201,6 +210,15 @@ for naziv, kat, cijena in jela:
         "INSERT INTO stavkaJelovnika (kategorijaId, naziv, opis, cijena) VALUES (?, ?, ?, ?)",
         kat_id, naziv, opis, cijena
     )
+
+for stavka_id in range(1, len(jela) + 1):
+    for _ in range(random.randint(1, 3)):
+        namirnica_id = random.randint(1, len(namirnice))
+        kolicina = round(random.uniform(0.1, 1.0), 2)
+        cursor.execute(
+            "INSERT INTO recept (stavkaJelovnikaId, namirnicaId, kolicina) VALUES (?, ?, ?)",
+            stavka_id, namirnica_id, kolicina
+        )
 
 for i in range(20):
     stol_id = random.randint(1, 20)
