@@ -16,6 +16,4 @@ public class Kuhar
     
     public ICollection<string> Specijaliteti { get; set; } = new List<string>();
     
-    //public virtual ICollection<StavkaNarudzbe> StavkeNarudzbi { get; set; } = new List<StavkaNarudzbe>();
-    
 }

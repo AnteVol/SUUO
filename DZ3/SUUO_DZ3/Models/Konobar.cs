@@ -13,7 +13,5 @@ public class Konobar
     public string Email { get; set; }
         
     public bool Aktivan { get; set; } = true;
-    
-    //public virtual ICollection<Narudzba> Narudzbe { get; set; } = new List<Narudzba>();
 
 }

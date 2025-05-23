@@ -12,7 +12,9 @@
       &lt;TestId&gt;xUnit::791C5E70-F0EB-4783-8885-EE4322E6FDE4::net8.0::SUUO_DZ3.Tests.Integration_tests.IntegracijskiNarudzbaTests.DodavanjeNarudzbe_NeUspjesno_NeispravanStol&lt;/TestId&gt;&#xD;
       &lt;TestId&gt;xUnit::791C5E70-F0EB-4783-8885-EE4322E6FDE4::net8.0::SUUO_DZ3.Tests.Integration_tests.IntegracijskiNarudzbaTests.DodavanjeKompletneNarudzbe_Uspjesno&lt;/TestId&gt;&#xD;
       &lt;TestId&gt;xUnit::791C5E70-F0EB-4783-8885-EE4322E6FDE4::net8.0::SUUO_DZ3.Tests.Unit_tests.Podatkovni_sloj.DataTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::791C5E70-F0EB-4783-8885-EE4322E6FDE4::net8.0::SUUO_DZ3.IntegrationTests.RestaurantApiIntegrationTests&lt;/TestId&gt;&#xD;
     &lt;/TestAncestor&gt;&#xD;
     &lt;ProjectFile&gt;791C5E70-F0EB-4783-8885-EE4322E6FDE4/d:Unit tests/d:Podatkovni sloj/f:DataTests.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;ProjectFile&gt;791C5E70-F0EB-4783-8885-EE4322E6FDE4/d:Integration tests/f:IntegracijskiTests.cs&lt;/ProjectFile&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
