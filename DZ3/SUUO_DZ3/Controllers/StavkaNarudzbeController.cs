@@ -21,8 +21,7 @@ public class StavkaNarudzbeController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var stavke = await _context.StavkeNarudzbe
-            .Include(s => s.Narudzba)
+        var stavke = await _context.StavkeNarudzbe //           .Include(s => s.Narudzba)
             .ToListAsync();
 
         return Ok(stavke);
@@ -33,7 +32,7 @@ public class StavkaNarudzbeController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var stavka = await _context.StavkeNarudzbe
-            .Include(s => s.Narudzba)
+//            .Include(s => s.Narudzba)
             .FirstOrDefaultAsync(m => m.StavkaNarudzbeId == id);
 
         if (stavka == null)
@@ -113,7 +112,7 @@ public class StavkaNarudzbeController : ControllerBase
     public async Task<IActionResult> GetByNarudzba(Guid narudzbaId)
     {
         var stavke = await _context.StavkeNarudzbe
-            .Include(s => s.Narudzba)
+//            .Include(s => s.Narudzba)
             .Where(s => s.NarudzbaId == narudzbaId)
             .ToListAsync();
 
@@ -125,7 +124,7 @@ public class StavkaNarudzbeController : ControllerBase
     public async Task<IActionResult> GetByStatus(StatusStavke status)
     {
         var stavke = await _context.StavkeNarudzbe
-            .Include(s => s.Narudzba)
+//            .Include(s => s.Narudzba)
             .Where(s => s.Status == status)
             .ToListAsync();
 
@@ -137,7 +136,7 @@ public class StavkaNarudzbeController : ControllerBase
     public async Task<IActionResult> GetAkcijskePonude()
     {
         var akcijskeStavke = await _context.StavkeNarudzbe
-            .Include(s => s.Narudzba)
+//            .Include(s => s.Narudzba)
             .Where(s => s.AkcijskaPonuda)
             .ToListAsync();
 

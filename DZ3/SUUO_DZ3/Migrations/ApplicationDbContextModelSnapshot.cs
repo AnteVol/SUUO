@@ -95,8 +95,8 @@ namespace SUUO_DZ3.Migrations
                     b.Property<Guid>("KonobarId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("KuharId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("MetodaPlacanja")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -111,8 +111,6 @@ namespace SUUO_DZ3.Migrations
                     b.HasKey("NarudzbaId");
 
                     b.HasIndex("KonobarId");
-
-                    b.HasIndex("KuharId");
 
                     b.ToTable("Narudzbe");
                 });
@@ -132,9 +130,6 @@ namespace SUUO_DZ3.Migrations
                     b.Property<int>("Kolicina")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("KuharIdKuhar")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("NarudzbaId")
                         .HasColumnType("uniqueidentifier");
 
@@ -147,8 +142,6 @@ namespace SUUO_DZ3.Migrations
 
                     b.HasKey("StavkaNarudzbeId");
 
-                    b.HasIndex("KuharIdKuhar");
-
                     b.HasIndex("NarudzbaId");
 
                     b.ToTable("StavkeNarudzbe");
@@ -157,45 +150,21 @@ namespace SUUO_DZ3.Migrations
             modelBuilder.Entity("SUUO_DZ3.Models.Narudzba", b =>
                 {
                     b.HasOne("SUUO_DZ3.Models.Konobar", "Konobar")
-                        .WithMany("Narudzbe")
-                        .HasForeignKey("KonobarId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SUUO_DZ3.Models.Kuhar", "Kuhar")
                         .WithMany()
-                        .HasForeignKey("KuharId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("KonobarId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Konobar");
-
-                    b.Navigation("Kuhar");
                 });
 
             modelBuilder.Entity("SUUO_DZ3.Models.StavkaNarudzbe", b =>
                 {
-                    b.HasOne("SUUO_DZ3.Models.Kuhar", null)
-                        .WithMany("StavkeNarudzbi")
-                        .HasForeignKey("KuharIdKuhar");
-
-                    b.HasOne("SUUO_DZ3.Models.Narudzba", "Narudzba")
+                    b.HasOne("SUUO_DZ3.Models.Narudzba", null)
                         .WithMany("StavkeNarudzbi")
                         .HasForeignKey("NarudzbaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Narudzba");
-                });
-
-            modelBuilder.Entity("SUUO_DZ3.Models.Konobar", b =>
-                {
-                    b.Navigation("Narudzbe");
-                });
-
-            modelBuilder.Entity("SUUO_DZ3.Models.Kuhar", b =>
-                {
-                    b.Navigation("StavkeNarudzbi");
                 });
 
             modelBuilder.Entity("SUUO_DZ3.Models.Narudzba", b =>

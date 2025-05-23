@@ -10,14 +10,13 @@ public class Narudzba
     
     public Guid KonobarId { get; set; }
     
-    public Guid KuharId { get; set; }
+    public Konobar Konobar { get; set; }
+    
     public string Stol { get; set; }
     
     public StatusNarudzbe Status { get; set; }
     
-    public Konobar Konobar { get; set; }
-    
-    public Kuhar Kuhar { get; set; }
+    public MetodaPlacanja? MetodaPlacanja { get; set; }
     
     public ICollection<StavkaNarudzbe> StavkeNarudzbi { get; set; }
     

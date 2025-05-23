@@ -14,6 +14,6 @@ public class Konobar
         
     public bool Aktivan { get; set; } = true;
     
-    public virtual ICollection<Narudzba> Narudzbe { get; set; } = new List<Narudzba>();
+    //public virtual ICollection<Narudzba> Narudzbe { get; set; } = new List<Narudzba>();
 
 }

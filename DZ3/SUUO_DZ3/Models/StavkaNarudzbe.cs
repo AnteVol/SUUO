@@ -16,8 +16,6 @@ public class StavkaNarudzbe
     public bool AkcijskaPonuda { get; set; }
 
     public StatusStavke Status { get; set; } = StatusStavke.NaCekanju;
-
-    public Narudzba Narudzba { get; set; }
     
     public decimal UkupnaCijena => Kolicina * Cijena;
     

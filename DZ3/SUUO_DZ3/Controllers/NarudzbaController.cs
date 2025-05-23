@@ -23,7 +23,6 @@ public class NarudzbaController : ControllerBase
     {
         var narudzbe = await _context.Narudzbe
             .Include(n => n.Konobar)
-            .Include(n => n.Kuhar)
             .Include(n => n.StavkeNarudzbi)
             .ToListAsync();
 
@@ -36,7 +35,6 @@ public class NarudzbaController : ControllerBase
     {
         var narudzba = await _context.Narudzbe
             .Include(n => n.Konobar)
-            .Include(n => n.Kuhar)
             .Include(n => n.StavkeNarudzbi)
             .FirstOrDefaultAsync(n => n.NarudzbaId == id);
 

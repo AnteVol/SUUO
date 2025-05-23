@@ -23,20 +23,6 @@ namespace SUUO_DZ3.Data
             {
                 entity.HasKey(n => n.NarudzbaId);
                 entity.Property(n => n.NarudzbaId).ValueGeneratedOnAdd();
-
-                entity.HasOne(n => n.Konobar)
-                    .WithMany(k => k.Narudzbe)
-                    .HasForeignKey(n => n.KonobarId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(n => n.Kuhar)
-                    .WithMany()
-                    .HasForeignKey(n => n.KuharId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasMany(n => n.StavkeNarudzbi)
-                    .WithOne(s => s.Narudzba)
-                    .HasForeignKey(s => s.NarudzbaId);
             });
 
             modelBuilder.Entity<Konobar>(entity =>
@@ -61,10 +47,6 @@ namespace SUUO_DZ3.Data
             {
                 entity.HasKey(s => s.StavkaNarudzbeId);
                 entity.Property(s => s.StavkaNarudzbeId).ValueGeneratedOnAdd();
-
-                entity.HasOne(s => s.Narudzba)
-                    .WithMany(n => n.StavkeNarudzbi)
-                    .HasForeignKey(s => s.NarudzbaId);
             });
         }
     }

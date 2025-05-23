@@ -29,7 +29,6 @@ public class KonobarController : ControllerBase
     public async Task<IActionResult> Get(Guid id)
     {
         var konobar = await _context.Konobari
-            .Include(k => k.Narudzbe)
             .FirstOrDefaultAsync(m => m.IdKonobar == id);
 
         if (konobar == null)
