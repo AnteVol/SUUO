@@ -21,7 +21,7 @@ public class StavkaNarudzbeController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var stavke = await _context.StavkeNarudzbe //           .Include(s => s.Narudzba)
+        var stavke = await _context.StavkeNarudzbe
             .ToListAsync();
 
         return Ok(stavke);
@@ -32,7 +32,6 @@ public class StavkaNarudzbeController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var stavka = await _context.StavkeNarudzbe
-//            .Include(s => s.Narudzba)
             .FirstOrDefaultAsync(m => m.StavkaNarudzbeId == id);
 
         if (stavka == null)
@@ -105,61 +104,6 @@ public class StavkaNarudzbeController : ControllerBase
         }
 
         return NoContent();
-    }
-
-    // GET: api/stavkanarudzbe/bynarudzba/{narudzbaId}
-    [HttpGet("bynarudzba/{narudzbaId}")]
-    public async Task<IActionResult> GetByNarudzba(Guid narudzbaId)
-    {
-        var stavke = await _context.StavkeNarudzbe
-//            .Include(s => s.Narudzba)
-            .Where(s => s.NarudzbaId == narudzbaId)
-            .ToListAsync();
-
-        return Ok(stavke);
-    }
-
-    // GET: api/stavkanarudzbe/bystatus/{status}
-    [HttpGet("bystatus/{status}")]
-    public async Task<IActionResult> GetByStatus(StatusStavke status)
-    {
-        var stavke = await _context.StavkeNarudzbe
-//            .Include(s => s.Narudzba)
-            .Where(s => s.Status == status)
-            .ToListAsync();
-
-        return Ok(stavke);
-    }
-
-    // GET: api/stavkanarudzbe/akcijskeponude
-    [HttpGet("akcijskeponude")]
-    public async Task<IActionResult> GetAkcijskePonude()
-    {
-        var akcijskeStavke = await _context.StavkeNarudzbe
-//            .Include(s => s.Narudzba)
-            .Where(s => s.AkcijskaPonuda)
-            .ToListAsync();
-
-        return Ok(akcijskeStavke);
-    }
-
-    // GET: api/stavkanarudzbe/statistics
-    [HttpGet("statistics")]
-    public async Task<IActionResult> GetStatistics()
-    {
-        var stats = new
-        {
-            UkupnoStavki = await _context.StavkeNarudzbe.CountAsync(),
-            AkcijskeStavke = await _context.StavkeNarudzbe.CountAsync(s => s.AkcijskaPonuda),
-            UkupnaVrijednost = await _context.StavkeNarudzbe.SumAsync(s => s.Kolicina * s.Cijena),
-            ProsjekCijena = await _context.StavkeNarudzbe.AverageAsync(s => s.Cijena),
-            StavkePoStatusu = await _context.StavkeNarudzbe
-                .GroupBy(s => s.Status)
-                .Select(g => new { Status = g.Key, Count = g.Count() })
-                .ToListAsync()
-        };
-
-        return Ok(stats);
     }
 
     private async Task<bool> StavkaNarudzbeExistsAsync(Guid id)

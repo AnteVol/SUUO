@@ -1,7 +1,10 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using SUUO_DZ3.Data;
-
+using SUUO_DZ3.Models.Validation;
 
 public class Program
 {
@@ -10,8 +13,17 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddControllersWithViews();
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStringAnte")));
+
+        if (!builder.Environment.EnvironmentName.Equals("Testing"))
+        {
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStringAnte")));
+        }
+        
+        builder.Services.AddValidatorsFromAssemblyContaining<KonobarValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<KuharValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<StavkaNarudbeValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<NarudzbaValidator>();
 
         builder.Services.AddFluentValidationAutoValidation();
         builder.Services.AddFluentValidationClientsideAdapters();
@@ -19,8 +31,8 @@ public class Program
         builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-                options.JsonSerializerOptions.WriteIndented = true;
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; 
             });
 
         var app = builder.Build();
@@ -28,7 +40,10 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            db.Database.Migrate();
+            if (db.Database.IsSqlServer())
+            {
+                db.Database.Migrate();
+            }
         }
 
         if (!app.Environment.IsDevelopment())

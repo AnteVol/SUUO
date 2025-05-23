@@ -1,4 +1,5 @@
-﻿using SUUO_DZ3.Models.Enums;
+﻿using System.Text.Json.Serialization;
+using SUUO_DZ3.Models.Enums;
 
 namespace SUUO_DZ3.Models;
 
@@ -16,8 +17,8 @@ public class StavkaNarudzbe
     public bool AkcijskaPonuda { get; set; }
 
     public StatusStavke Status { get; set; } = StatusStavke.NaCekanju;
-    
+        
     public decimal UkupnaCijena => Kolicina * Cijena;
-    
+        
     public int UkupnoAkcijskihPonuda => (AkcijskaPonuda ? 1 : 0) * Kolicina;
 }

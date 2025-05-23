@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,28 +15,33 @@ public class RestaurantApiIntegrationTests : IClassFixture<WebApplicationFactory
 {
     private readonly WebApplicationFactory<Program> _factory;
     private readonly HttpClient _client;
+    private readonly IServiceScopeFactory _scopeFactory;
 
     public RestaurantApiIntegrationTests(WebApplicationFactory<Program> factory)
     {
+        var dbName = Guid.NewGuid().ToString(); // ➜ izolirana baza
+
         _factory = factory.WithWebHostBuilder(builder =>
         {
+            builder.UseEnvironment("Testing");
             builder.ConfigureServices(services =>
             {
-                // Ukloni postojeći DbContext
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
                 if (descriptor != null)
                     services.Remove(descriptor);
 
-                // Dodaj in-memory bazu za testiranje
                 services.AddDbContext<ApplicationDbContext>(options =>
                 {
-                    options.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString());
+                    options.UseInMemoryDatabase(dbName);
                 });
             });
         });
 
         _client = _factory.CreateClient();
+
+        // ➜ koristimo za SeedTestData()
+        _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>();
     }
 
     [Fact]
@@ -137,6 +143,34 @@ public class RestaurantApiIntegrationTests : IClassFixture<WebApplicationFactory
         
         Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
 
+        var responseJson = await createResponse.Content.ReadAsStringAsync();
+        Console.WriteLine($"Full JSON: {responseJson}");
+
+// Test just the stavke array first
+        var document = JsonDocument.Parse(responseJson);
+        var stavkeElement = document.RootElement.GetProperty("stavkeNarudzbi");
+        var stavkeJson = stavkeElement.GetRawText();
+        Console.WriteLine($"Stavke JSON: {stavkeJson}");
+
+// Try to deserialize just the array
+        try
+        {
+            var stavkeList = JsonSerializer.Deserialize<List<StavkaNarudzbe>>(
+                stavkeJson, 
+                new JsonSerializerOptions 
+                { 
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                });
+            Console.WriteLine($"Stavke deserialized successfully: {stavkeList.Count} items");
+            Console.WriteLine($"First item: {stavkeList[0].Naziv}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Stavke deserialization failed: {ex.Message}");
+            Console.WriteLine($"Inner exception: {ex.InnerException?.Message}");
+        }
+        
         var createdNarudzba = JsonSerializer.Deserialize<Narudzba>(
             await createResponse.Content.ReadAsStringAsync(),
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
@@ -156,45 +190,6 @@ public class RestaurantApiIntegrationTests : IClassFixture<WebApplicationFactory
         Assert.Equal(createdNarudzba.NarudzbaId, retrievedNarudzba.NarudzbaId);
         Assert.NotNull(retrievedNarudzba.StavkeNarudzbi);
         Assert.Single(retrievedNarudzba.StavkeNarudzbi);
-    }
-
-    [Fact]
-    public async Task StavkaNarudzbeController_GetStatistics_ShouldReturnCorrectData()
-    {
-        await SeedTestData();
-        
-        var response = await _client.GetAsync("/api/stavkanarudzbe/statistics");
-        
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        var statisticsJson = await response.Content.ReadAsStringAsync();
-        var statistics = JsonSerializer.Deserialize<JsonElement>(statisticsJson);
-        
-        Assert.True(statistics.TryGetProperty("ukupnoStavki", out _));
-        Assert.True(statistics.TryGetProperty("akcijskeStavke", out _));
-        Assert.True(statistics.TryGetProperty("ukupnaVrijednost", out _));
-        Assert.True(statistics.TryGetProperty("prosjekCijena", out _));
-        Assert.True(statistics.TryGetProperty("stavkePoStatusu", out _));
-
-        var ukupnoStavki = statistics.GetProperty("ukupnoStavki").GetInt32();
-        Assert.True(ukupnoStavki > 0);
-    }
-
-    [Fact]
-    public async Task StavkaNarudzbeController_GetByStatus_ShouldReturnFilteredResults()
-    {
-        await SeedTestData();
-        
-        var response = await _client.GetAsync("/api/stavkanarudzbe/bystatus/0");
-        
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        var stavkeJson = await response.Content.ReadAsStringAsync();
-        var stavke = JsonSerializer.Deserialize<List<StavkaNarudzbe>>(stavkeJson,
-            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-
-        Assert.NotNull(stavke);
-        Assert.All(stavke, stavka => Assert.Equal(StatusStavke.NaCekanju, stavka.Status));
     }
 
     [Fact]
@@ -233,13 +228,14 @@ public class RestaurantApiIntegrationTests : IClassFixture<WebApplicationFactory
 
     private async Task SeedTestData()
     {
-        using var scope = _factory.Services.CreateScope();
+        using var scope = _scopeFactory.CreateScope(); // ← koristi scope iz factory-a
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        
+
+        // Resetiraj sve entitete
         context.StavkeNarudzbe.RemoveRange(context.StavkeNarudzbe);
         context.Narudzbe.RemoveRange(context.Narudzbe);
         context.Konobari.RemoveRange(context.Konobari);
-        
+
         var konobar = new Konobar
         {
             IdKonobar = Guid.NewGuid(),

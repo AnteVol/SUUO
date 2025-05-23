@@ -1,4 +1,5 @@
-﻿using SUUO_DZ3.Models.Enums;
+﻿using System.Text.Json.Serialization;
+using SUUO_DZ3.Models.Enums;
 
 namespace SUUO_DZ3.Models;
 
@@ -10,7 +11,7 @@ public class Narudzba
     
     public Guid KonobarId { get; set; }
     
-    public Konobar Konobar { get; set; }
+    public Konobar? Konobar { get; set; }
     
     public string Stol { get; set; }
     
@@ -18,8 +19,8 @@ public class Narudzba
     
     public MetodaPlacanja? MetodaPlacanja { get; set; }
     
-    public ICollection<StavkaNarudzbe> StavkeNarudzbi { get; set; }
-    
+    [JsonPropertyName("stavkeNarudzbi")]
+    public List<StavkaNarudzbe> StavkeNarudzbi { get; set; } = new List<StavkaNarudzbe>();
     
     public decimal UkupnaCijena => StavkeNarudzbi?.Sum(s => s.UkupnaCijena) ?? 0;
     

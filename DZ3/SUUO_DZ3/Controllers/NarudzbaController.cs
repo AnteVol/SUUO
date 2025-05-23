@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using SUUO_DZ3.Data;
 using SUUO_DZ3.Models;
-using SUUO_DZ3.Models.Enums;
 
 namespace SUUO_DZ3.Controllers;
 
