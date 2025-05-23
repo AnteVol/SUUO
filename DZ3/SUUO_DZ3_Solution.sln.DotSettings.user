@@ -1,0 +1,14 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=879b574f_002D16ff_002D49b2_002Db0a9_002Df16bc93a1593/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from &amp;lt;SUUO_DZ3.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="C:\Users\antev\Documents\Fakultet\Fakultet 4. godina\2. semestar\Informacijski sustavi\SUUO\DZ3\SUUO_DZ3.Tests" Presentation="&amp;lt;SUUO_DZ3.Tests&amp;gt;" /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f2f5b798_002D6c88_002D4f86_002Dbe1e_002D0a51bc98c314/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Should_Fail_When_UkupnoAkcijskihPonuda_Is_3_Or_More" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::791C5E70-F0EB-4783-8885-EE4322E6FDE4::net8.0::SUUO_DZ3.Tests.Unit_tests.IspravnostNarudzbeTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::791C5E70-F0EB-4783-8885-EE4322E6FDE4::net8.0::SUUO_DZ3.Tests.Unit_tests.IspravnostKuharaTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::791C5E70-F0EB-4783-8885-EE4322E6FDE4::net8.0::SUUO_DZ3.Tests.Integration_tests.IntegracijskiNarudzbaTests.DodajNarudzbu_Uspjesno&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::791C5E70-F0EB-4783-8885-EE4322E6FDE4::net8.0::SUUO_DZ3.Tests.Integration_tests.IntegracijskiNarudzbaTests.DodavanjeNarudzbe_NeUspjesno&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::791C5E70-F0EB-4783-8885-EE4322E6FDE4::net8.0::SUUO_DZ3.Tests.Integration_tests.IntegracijskiNarudzbaTests.DodavanjeNarudzbe_NeUspjesno_NeispravanStol&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::791C5E70-F0EB-4783-8885-EE4322E6FDE4::net8.0::SUUO_DZ3.Tests.Integration_tests.IntegracijskiNarudzbaTests.DodavanjeKompletneNarudzbe_Uspjesno&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
