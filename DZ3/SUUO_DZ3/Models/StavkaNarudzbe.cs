@@ -9,7 +9,7 @@ public class StavkaNarudzbe
     public Guid NarudzbaId { get; set; }
     
     public string Naziv { get; set; }
-    public int Kolicina { get; set; }
+    public int Kolicina { get; set; } = 1;
     
     public decimal Cijena { get; set; }
     

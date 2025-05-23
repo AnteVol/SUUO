@@ -76,6 +76,7 @@ public class IspravnostNarudzbeTests
             VrijemeNarudzbe = new DateTime(2025, 5, 23, 12, 0, 0),
             Stol = "Stol01",
             Status = StatusNarudzbe.Posluzeno,
+            MetodaPlacanja = MetodaPlacanja.Gotovina,
             StavkeNarudzbi = new List<StavkaNarudzbe>
             {
                 new StavkaNarudzbe { Status = StatusStavke.Pripremljeno },
@@ -132,9 +133,11 @@ public class IspravnostNarudzbeTests
             VrijemeNarudzbe = new DateTime(2025, 5, 23, 12, 0, 0),
             Stol = "Stol01",
             Status = StatusNarudzbe.UPripremi,
+            MetodaPlacanja = MetodaPlacanja.Kartica,
             StavkeNarudzbi = new List<StavkaNarudzbe>
             {
-                new StavkaNarudzbe { Status = StatusStavke.NaCekanju }
+                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 500},
+                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 500}
             }
         };
 

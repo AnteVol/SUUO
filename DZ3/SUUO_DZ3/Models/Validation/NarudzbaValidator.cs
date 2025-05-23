@@ -11,18 +11,20 @@ public class NarudzbaValidator : AbstractValidator<Narudzba>
         RuleFor(x => x.VrijemeNarudzbe)
             .Must(UnutarRadnogVremena)
             .WithMessage("Narudžbe se zaprijamju samo između 10:00 i 23:00.");
-        
+
         RuleFor(x => x.Stol)
             .Must(IspravnostStola)
             .WithMessage("Naziv stola mora biti u formatu 'StolXX', gdje je XX broj od 00 do 25.");
-        
-        RuleFor(x => x)
-            .Must(ValidiranjeMetodePlacanja)
-            .WithMessage("Ako je ukupna cijena ispod 50, može se platiti samo gotovinom.");
-        
+
         RuleFor(x => x)
             .Must(SveStavkePripremljeneAkoStatusPosluzenIliNaplacen)
-            .WithMessage("Sve stavke narudžbe moraju biti pripremljene prije nego što narudžba može biti poslužena ili naplaćena.");
+            .WithMessage(
+                "Sve stavke narudžbe moraju biti pripremljene prije nego što narudžba može biti poslužena ili naplaćena.");
+
+        RuleFor(x => x)
+            .Must(MetodaPlacanjaValidacija)
+            .WithMessage(
+                "Metoda plaćanja mora biti prazna dok sve stavke nisu poslužene. Kada su sve stavke poslužene, za iznose do 50 može se platiti samo gotovinom.");
     }
 
     private bool UnutarRadnogVremena(DateTime vrijeme)
@@ -41,7 +43,7 @@ public class NarudzbaValidator : AbstractValidator<Narudzba>
 
         return Regex.IsMatch(stol, @"^Stol(0[0-9]|1[0-9]|2[0-5])$");
     }
-    
+
     private bool SveStavkePripremljeneAkoStatusPosluzenIliNaplacen(Narudzba narudzba)
     {
         if (narudzba.Status != StatusNarudzbe.Posluzeno &&
@@ -50,13 +52,22 @@ public class NarudzbaValidator : AbstractValidator<Narudzba>
 
         return narudzba.StavkeNarudzbi.All(stavka => stavka.Status == StatusStavke.Pripremljeno);
     }
-    
-    private bool ValidiranjeMetodePlacanja(Narudzba narudzba)
+
+    private bool MetodaPlacanjaValidacija(Narudzba narudzba)
     {
-        if (narudzba.UkupnaCijena < 50)
+        bool sveStavkePripremljene =
+            narudzba.StavkeNarudzbi?.All(stavka => stavka.Status == StatusStavke.Pripremljeno) ?? true;
+
+        if (!sveStavkePripremljene)
+        {
+            return narudzba.MetodaPlacanja == null;
+        }
+
+        if (narudzba.UkupnaCijena <= 50)
         {
             return narudzba.MetodaPlacanja == MetodaPlacanja.Gotovina;
         }
-        return true;
+
+        return narudzba.MetodaPlacanja != null;
     }
 }
