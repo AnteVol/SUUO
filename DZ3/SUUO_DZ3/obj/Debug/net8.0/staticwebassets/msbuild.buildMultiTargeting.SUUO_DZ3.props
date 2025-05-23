@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\SUUO_DZ3.props" />
+</Project>
