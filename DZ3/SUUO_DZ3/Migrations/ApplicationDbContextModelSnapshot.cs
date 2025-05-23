@@ -95,7 +95,7 @@ namespace SUUO_DZ3.Migrations
                     b.Property<Guid>("KonobarId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("MetodaPlacanja")
+                    b.Property<int?>("MetodaPlacanja")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")

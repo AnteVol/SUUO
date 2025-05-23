@@ -9,15 +9,66 @@ namespace SUUO_DZ3.Tests.Unit_tests.Podatkovni_sloj;
 public class DataTests
 {
     private readonly ApplicationDbContext _context;
-    
-    private NarudzbaValidator _validator;
+    private readonly NarudzbaValidator _narudzbaValidator;
+    private readonly KonobarValidator _konobarValidator;
+    private readonly KuharValidator _kuharValidator;
 
     public DataTests()
     {
         _context = TestDbContextFactory.Create();
-        _validator = new NarudzbaValidator();
+        _narudzbaValidator = new NarudzbaValidator();
+        _konobarValidator = new KonobarValidator();
+        _kuharValidator = new KuharValidator();
     }
 
+    [Fact]
+    public async Task DodavanjeKonobara_Uspjesno()
+    {
+        var konobar = new Konobar
+        {
+            IdKonobar = Guid.NewGuid(),
+            Ime = "Marko",
+            Prezime = "Marković",
+            Telefon = "+385-98-1234567",
+            Email = "marko.markovic@restoran.com"
+        };
+
+        var validacija = _konobarValidator.Validate(konobar);
+        Assert.True(validacija.IsValid, string.Join(", ", validacija.Errors.Select(e => e.ErrorMessage)));
+
+        await _context.Konobari.AddAsync(konobar);
+        await _context.SaveChangesAsync();
+
+        var konobarIzBaze = await _context.Konobari.FindAsync(konobar.IdKonobar);
+        Assert.NotNull(konobarIzBaze);
+        Assert.Equal("Marko", konobarIzBaze.Ime);
+        Assert.Equal("marko.markovic@restoran.com", konobarIzBaze.Email);
+    }
+    
+    public async Task DodavanjeKonobara_NeUspjesno_NeispravanEmail()
+    {
+        var konobar = new Konobar
+        {
+            IdKonobar = Guid.NewGuid(),
+            Ime = "Petra",
+            Prezime = "Petrić",
+            Telefon = "+385-98-7654321",
+            Email = "neispravanemail"
+        };
+
+        var validacija = _konobarValidator.Validate(konobar);
+        Assert.False(validacija.IsValid);
+
+        if (validacija.IsValid)
+        {
+            await _context.Konobari.AddAsync(konobar);
+            await _context.SaveChangesAsync();
+        }
+
+        var konobarIzBaze = await _context.Konobari.FindAsync(konobar.IdKonobar);
+        Assert.Null(konobarIzBaze);
+    }
+    
     [Fact]
     public async Task DodavanjeNarudzbe_Uspjesno()
     {
@@ -28,7 +79,7 @@ public class DataTests
             VrijemeNarudzbe = DateTime.Now
         };
 
-        var rezultatValidacije = _validator.Validate(narudzba);
+        var rezultatValidacije = _narudzbaValidator.Validate(narudzba);
         
         if (rezultatValidacije.IsValid)
         {
@@ -51,7 +102,7 @@ public class DataTests
             VrijemeNarudzbe = DateTime.Now
         };
         
-        var rezultatValidacije = _validator.Validate(narudzba);
+        var rezultatValidacije = _narudzbaValidator.Validate(narudzba);
 
         Assert.False(rezultatValidacije.IsValid);
 
@@ -117,7 +168,7 @@ public class DataTests
             }
         };
 
-        var validacija = _validator.Validate(narudzba);
+        var validacija = _narudzbaValidator.Validate(narudzba);
         Assert.True(validacija.IsValid, string.Join(", ", validacija.Errors.Select(e => e.ErrorMessage)));
         
         await _context.Konobari.AddAsync(konobar);

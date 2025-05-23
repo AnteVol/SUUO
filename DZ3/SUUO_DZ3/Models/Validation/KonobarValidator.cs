@@ -2,7 +2,7 @@
 
 namespace SUUO_DZ3.Models.Validation;
 
-public class KonobarValidator : AbstractValidator<Kuhar>
+public class KonobarValidator : AbstractValidator<Konobar>
 {
     public KonobarValidator()
     {
