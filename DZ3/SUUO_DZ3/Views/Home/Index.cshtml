@@ -1,8 +1,266 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<SUUO_DZ3.Models.Narudzba>
+@{
+    ViewData["Title"] = "Narudžbe";
+    var narudzbe = Model ?? new List<SUUO_DZ3.Models.Narudzba>();
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row">
+    <!-- Master: Lista narudžbi s filtriranjem i navigacijom -->
+    <div class="col-md-4">
+        <h3>Narudžbe</h3>
+        <input type="text" id="searchBox" class="form-control mb-2" placeholder="Pretraži po stolu ili konobaru..." oninput="filterNarudzbe()">
+        <ul class="list-group" id="narudzbeList">
+            @for (int i = 0; i < narudzbe.Count; i++)
+            {
+                <li class="list-group-item narudzba-item" data-index="@i" onclick="showDetails(@i)">
+                    <strong>Stol:</strong> @narudzbe[i].Stol <br />
+                    <strong>Vrijeme:</strong> @narudzbe[i].VrijemeNarudzbe.ToString("g") <br />
+                    <strong>Status:</strong> @narudzbe[i].Status
+                </li>
+            }
+        </ul>
+        <button class="btn btn-primary mt-3 w-100" onclick="showCreateForm()">Nova narudžba</button>
+    </div>
+
+    <!-- Detail: Prikaz i uređivanje detalja narudžbe -->
+    <div class="col-md-8">
+        <div id="detailForm" style="display:none;">
+            <h3>Detalji narudžbe</h3>
+            <form id="narudzbaForm" autocomplete="off" onsubmit="event.preventDefault(); saveNarudzba();">
+                <input type="hidden" id="narudzbaIndex" />
+                <div class="mb-2">
+                    <label>Stol</label>
+                    <input type="text" class="form-control" id="stolInput" required />
+                </div>
+                <div class="mb-2">
+                    <label>Vrijeme narudžbe</label>
+                    <input type="datetime-local" class="form-control" id="vrijemeInput" required />
+                </div>
+                <div class="mb-2">
+                    <label>Status</label>
+                    <input type="text" class="form-control" id="statusInput" required />
+                </div>
+                <div class="mb-2">
+                    <label>Konobar</label>
+                    <select class="form-control" id="konobarInput" required>
+                        <!-- Popuniti server-side ili JS-om -->
+                    </select>
+                </div>
+                <hr />
+                <h5>Stavke narudžbe</h5>
+                <table class="table table-bordered table-sm" id="stavkeTable">
+                    <thead>
+                        <tr>
+                            <th>Naziv</th>
+                            <th>Količina</th>
+                            <th>Cijena</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Popunjava se JS-om -->
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-outline-primary btn-sm mb-2" onclick="addStavka()">Dodaj stavku</button>
+                <div class="mb-2">
+                    <button type="button" class="btn btn-secondary" onclick="prevNarudzba()">Prethodna</button>
+                    <button type="button" class="btn btn-secondary" onclick="nextNarudzba()">Sljedeća</button>
+                    <button type="submit" class="btn btn-success">Spremi</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteNarudzba()">Obriši</button>
+                </div>
+                <div id="validationMsg" class="text-danger"></div>
+            </form>
+        </div>
+        <div id="noSelection" class="text-muted" style="margin-top:2rem;">
+            <em>Odaberite narudžbu za prikaz detalja.</em>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+<script>
+    // Pretvori narudzbe iz Razor modela u JS
+    var narudzbe = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model ?? new List<SUUO_DZ3.Models.Narudzba>()));
+    var konobari = []; // Popuni AJAX-om ili server-side ako treba
+    var currentIndex = null;
+
+    function filterNarudzbe() {
+        var filter = document.getElementById('searchBox').value.toLowerCase();
+        var items = document.querySelectorAll('.narudzba-item');
+        narudzbe.forEach(function(n, i) {
+            var text = (n.stol || '') + ' ' + (n.konobar?.ime || '');
+            items[i].style.display = text.toLowerCase().includes(filter) ? '' : 'none';
+        });
+    }
+
+    function showDetails(idx) {
+        currentIndex = idx;
+        var n = narudzbe[idx];
+        document.getElementById('narudzbaIndex').value = idx;
+        document.getElementById('stolInput').value = n.stol || '';
+        document.getElementById('vrijemeInput').value = n.vrijemeNarudzbe ? n.vrijemeNarudzbe.substring(0,16) : '';
+        document.getElementById('statusInput').value = n.status || '';
+        fillKonobarDropdown(n.konobar?.idKonobar);
+        renderStavke(n.stavkeNarudzbi || []);
+        document.getElementById('detailForm').style.display = '';
+        document.getElementById('noSelection').style.display = 'none';
+        document.getElementById('validationMsg').innerText = '';
+    }
+
+    function prevNarudzba() {
+        if (currentIndex > 0) showDetails(currentIndex - 1);
+    }
+    function nextNarudzba() {
+        if (currentIndex < narudzbe.length - 1) showDetails(currentIndex + 1);
+    }
+
+    function saveNarudzba() {
+        var ukupno = 0;
+        var stavke = [];
+        var rows = document.querySelectorAll('#stavkeTable tbody tr');
+        for (var i = 0; i < rows.length; i++) {
+            var naziv = rows[i].querySelector('.stavka-naziv').value;
+            var kolicina = parseInt(rows[i].querySelector('.stavka-kolicina').value) || 0;
+            var cijena = parseFloat(rows[i].querySelector('.stavka-cijena').value) || 0;
+            if (!naziv || kolicina <= 0 || cijena < 0) {
+                document.getElementById('validationMsg').innerText = 'Sve stavke moraju imati naziv, količinu > 0 i cijenu >= 0.';
+                return;
+            }
+            ukupno += kolicina * cijena;
+            stavke.push({ naziv, kolicina, cijena, status: rows[i].querySelector('.stavka-status').value });
+        }
+        if (ukupno === 0) {
+            document.getElementById('validationMsg').innerText = 'Ukupan iznos narudžbe ne smije biti nula.';
+            return;
+        }
+        var konobarId = document.getElementById('konobarInput').value;
+        if (!konobarId) {
+            document.getElementById('validationMsg').innerText = 'Odaberite konobara.';
+            return;
+        }
+
+        var idx = document.getElementById('narudzbaIndex').value;
+        var narudzbaId = (idx !== "" && narudzbe[idx]) ? narudzbe[idx].narudzbaId : null;
+        var narudzba = {
+            narudzbaId: narudzbaId,
+            stol: document.getElementById('stolInput').value,
+            vrijemeNarudzbe: document.getElementById('vrijemeInput').value,
+            status: document.getElementById('statusInput').value,
+            konobarId: konobarId,
+            stavkeNarudzbi: stavke
+        };
+
+        var isEdit = !!narudzbaId;
+        var url = isEdit ? `/api/narudzba/${narudzbaId}` : '/api/narudzba';
+        var method = isEdit ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(narudzba)
+        })
+        .then(resp => {
+            if (!resp.ok) throw new Error('Greška pri spremanju narudžbe.');
+            return resp.json();
+        })
+        .then(data => {
+            document.getElementById('validationMsg').innerText = 'Narudžba uspješno spremljena.';
+            setTimeout(() => location.reload(), 1000);
+        })
+        .catch(err => {
+            document.getElementById('validationMsg').innerText = err.message || 'Greška pri spremanju narudžbe.';
+        });
+    }
+
+    function deleteNarudzba() {
+        var idx = document.getElementById('narudzbaIndex').value;
+        if (idx === "" || !narudzbe[idx] || !narudzbe[idx].narudzbaId) {
+            document.getElementById('validationMsg').innerText = 'Nije odabrana narudžba za brisanje.';
+            return;
+        }
+        var narudzbaId = narudzbe[idx].narudzbaId;
+        if (confirm('Jeste li sigurni da želite obrisati ovu narudžbu?')) {
+            fetch(`/api/narudzba/${narudzbaId}`, {
+                method: 'DELETE'
+            })
+            .then(resp => {
+                if (!resp.ok) throw new Error('Greška pri brisanju narudžbe.');
+                document.getElementById('validationMsg').innerText = 'Narudžba uspješno obrisana.';
+                setTimeout(() => location.reload(), 1000);
+            })
+            .catch(err => {
+                document.getElementById('validationMsg').innerText = err.message || 'Greška pri brisanju narudžbe.';
+            });
+        }
+    }
+
+    function showCreateForm() {
+        currentIndex = null;
+        document.getElementById('narudzbaForm').reset();
+        fillKonobarDropdown();
+        renderStavke([]);
+        document.getElementById('detailForm').style.display = '';
+        document.getElementById('noSelection').style.display = 'none';
+        document.getElementById('validationMsg').innerText = '';
+    }
+
+    function fillKonobarDropdown(selectedId) {
+        var ddl = document.getElementById('konobarInput');
+        ddl.innerHTML = '';
+        if (konobari.length === 0) {
+            ddl.innerHTML = '<option value="">(nema podataka)</option>';
+            return;
+        }
+        konobari.forEach(function(k) {
+            var opt = document.createElement('option');
+            opt.value = k.idKonobar;
+            opt.text = k.ime + ' ' + k.prezime;
+            if (selectedId && k.idKonobar === selectedId) opt.selected = true;
+            ddl.appendChild(opt);
+        });
+    }
+
+    function renderStavke(stavke) {
+        var tbody = document.getElementById('stavkeTable').querySelector('tbody');
+        tbody.innerHTML = '';
+        stavke.forEach(function(s, idx) {
+            var row = document.createElement('tr');
+            row.innerHTML = `<td><input class="form-control form-control-sm stavka-naziv" value="${s.naziv || ''}" /></td>
+                             <td><input type="number" min="1" class="form-control form-control-sm stavka-kolicina" value="${s.kolicina || 1}" /></td>
+                             <td><input type="number" min="0" step="0.01" class="form-control form-control-sm stavka-cijena" value="${s.cijena || 0}" /></td>
+                             <td><input class="form-control form-control-sm stavka-status" value="${s.status || ''}" /></td>
+                             <td><button type="button" class="btn btn-danger btn-sm" onclick="removeStavka(this)">X</button></td>`;
+            tbody.appendChild(row);
+        });
+    }
+
+    function addStavka() {
+        var tbody = document.getElementById('stavkeTable').querySelector('tbody');
+        var row = document.createElement('tr');
+        row.innerHTML = `<td><input class="form-control form-control-sm stavka-naziv" /></td>
+                         <td><input type="number" min="1" class="form-control form-control-sm stavka-kolicina" value="1" /></td>
+                         <td><input type="number" min="0" step="0.01" class="form-control form-control-sm stavka-cijena" value="0" /></td>
+                         <td><input class="form-control form-control-sm stavka-status" value="Na čekanju" /></td>
+                         <td><button type="button" class="btn btn-danger btn-sm" onclick="removeStavka(this)">X</button></td>`;
+        tbody.appendChild(row);
+    }
+
+    function removeStavka(btn) {
+        btn.closest('tr').remove();
+    }
+
+    // Dummy konobari za demo (makni i zamijeni AJAX-om prema bazi)
+    konobari = [
+        { idKonobar: '1', ime: 'Ivan', prezime: 'Ivić' },
+        { idKonobar: '2', ime: 'Ana', prezime: 'Anić' }
+    ];
+
+    // Automatski prikaži prvu narudžbu ako postoji
+    if (narudzbe.length > 0) {
+        showDetails(0);
+    }
+</script>
+}
