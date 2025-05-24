@@ -14,7 +14,7 @@ public class IspravnostKuharaTests
     }
 
     [Fact]
-    public void Should_Not_Have_Validation_Error_For_Valid_Telefon()
+    public void ValidacijaKuhara_Ispravno_TelefonIspravan()
     {
         var kuhar = new Kuhar { Telefon = "+385-912345678" };
         var result = _validator.TestValidate(kuhar);
@@ -22,7 +22,7 @@ public class IspravnostKuharaTests
     }
 
     [Fact]
-    public void Should_Have_Validation_Error_For_Invalid_Telefon()
+    public void ValidacijaKuhara_Neispravno_PogresanFormatTelefona()
     {
         var kuhar = new Kuhar { Telefon = "0912345678" };
         var result = _validator.TestValidate(kuhar);
@@ -30,7 +30,7 @@ public class IspravnostKuharaTests
     }
 
     [Fact]
-    public void Should_Not_Have_Validation_Error_For_Valid_Email()
+    public void ValidacijaKuhara_Ispravno_EmailIspravan()
     {
         var kuhar = new Kuhar { Email = "kuhar@example.com" };
         var result = _validator.TestValidate(kuhar);
@@ -38,7 +38,7 @@ public class IspravnostKuharaTests
     }
 
     [Fact]
-    public void Should_Have_Validation_Error_For_Invalid_Email()
+    public void ValidacijaKuhara_Neispravno_PogresanFormatEmaila()
     {
         var kuhar = new Kuhar { Email = "neispravanemail" };
         var result = _validator.TestValidate(kuhar);
@@ -46,7 +46,7 @@ public class IspravnostKuharaTests
     }
 
     [Fact]
-    public void Should_Not_Have_Validation_Error_For_Valid_Specijaliteti()
+    public void ValidacijaKuhara_Ispravno_IspravaniSpecijaliteti()
     {
         const string specijaliteti = "Riba;Mesno";
         var kuhar = new Kuhar { Specijaliteti = specijaliteti.Split(";").ToList() };
@@ -55,7 +55,7 @@ public class IspravnostKuharaTests
     }
 
     [Fact]
-    public void Should_Have_Validation_Error_For_Empty_Specijaliteti()
+    public void ValidacijaKuhara_Nespravno_NemaSpecijaliteti()
     {
         var kuhar = new Kuhar { Specijaliteti = new List<string>() };
         var result = _validator.TestValidate(kuhar);

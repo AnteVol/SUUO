@@ -11,15 +11,15 @@ using SUUO_DZ3.Models.Enums;
 
 namespace SUUO_DZ3.Tests.Integration_tests;
 
-public class RestaurantApiIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class SUUOIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> _factory;
     private readonly HttpClient _client;
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public RestaurantApiIntegrationTests(WebApplicationFactory<Program> factory)
+    public SUUOIntegrationTests(WebApplicationFactory<Program> factory)
     {
-        var dbName = Guid.NewGuid().ToString(); // ➜ izolirana baza
+        var dbName = Guid.NewGuid().ToString();
 
         _factory = factory.WithWebHostBuilder(builder =>
         {
@@ -39,8 +39,6 @@ public class RestaurantApiIntegrationTests : IClassFixture<WebApplicationFactory
         });
 
         _client = _factory.CreateClient();
-
-        // ➜ koristimo za SeedTestData()
         _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>();
     }
 
@@ -66,30 +64,30 @@ public class RestaurantApiIntegrationTests : IClassFixture<WebApplicationFactory
         
         Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
 
-        var createdKonobar = JsonSerializer.Deserialize<Konobar>(
+        var kreiraniKonobar = JsonSerializer.Deserialize<Konobar>(
             await createResponse.Content.ReadAsStringAsync(),
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-        Assert.NotEqual(Guid.Empty, createdKonobar.IdKonobar);
-        Assert.Equal("Marko", createdKonobar.Ime);
+        Assert.NotEqual(Guid.Empty, kreiraniKonobar?.IdKonobar);
+        Assert.Equal("Marko", kreiraniKonobar?.Ime);
         
-        var getResponse = await _client.GetAsync($"/api/konobar/{createdKonobar.IdKonobar}");
+        var getResponse = await _client.GetAsync($"/api/konobar/{kreiraniKonobar?.IdKonobar}");
         
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
 
-        var retrievedKonobar = JsonSerializer.Deserialize<Konobar>(
+        var dohvaceniKonobar = JsonSerializer.Deserialize<Konobar>(
             await getResponse.Content.ReadAsStringAsync(),
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-        Assert.Equal(createdKonobar.IdKonobar, retrievedKonobar.IdKonobar);
-        Assert.Equal("Marko", retrievedKonobar.Ime);
-        Assert.Equal("+385-912345678", retrievedKonobar.Telefon);
+        Assert.Equal(kreiraniKonobar?.IdKonobar, dohvaceniKonobar?.IdKonobar);
+        Assert.Equal("Marko", dohvaceniKonobar?.Ime);
+        Assert.Equal("+385-912345678", dohvaceniKonobar?.Telefon);
     }
 
     [Fact]
     public async Task KonobarController_CreateWithInvalidData_ShouldReturnBadRequest()
     {
-        var invalidKonobar = new Konobar
+        var neispravanKonobar = new Konobar
         {
             Ime = "Ana",
             Prezime = "Marić",
@@ -98,7 +96,7 @@ public class RestaurantApiIntegrationTests : IClassFixture<WebApplicationFactory
             Aktivan = true
         };
 
-        var json = JsonSerializer.Serialize(invalidKonobar, new JsonSerializerOptions
+        var json = JsonSerializer.Serialize(neispravanKonobar, new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         });
@@ -112,7 +110,7 @@ public class RestaurantApiIntegrationTests : IClassFixture<WebApplicationFactory
     [Fact]
     public async Task NarudzbaController_CompleteWorkflow_ShouldWork()
     {
-        var konobar = await CreateKonobar();
+        var konobar = await KreirajKonobara();
 
         var narudzba = new Narudzba
         {
@@ -142,65 +140,36 @@ public class RestaurantApiIntegrationTests : IClassFixture<WebApplicationFactory
         var createResponse = await _client.PostAsync("/api/narudzbe", content);
         
         Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
-
-        var responseJson = await createResponse.Content.ReadAsStringAsync();
-        Console.WriteLine($"Full JSON: {responseJson}");
-
-// Test just the stavke array first
-        var document = JsonDocument.Parse(responseJson);
-        var stavkeElement = document.RootElement.GetProperty("stavkeNarudzbi");
-        var stavkeJson = stavkeElement.GetRawText();
-        Console.WriteLine($"Stavke JSON: {stavkeJson}");
-
-// Try to deserialize just the array
-        try
-        {
-            var stavkeList = JsonSerializer.Deserialize<List<StavkaNarudzbe>>(
-                stavkeJson, 
-                new JsonSerializerOptions 
-                { 
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    PropertyNameCaseInsensitive = true
-                });
-            Console.WriteLine($"Stavke deserialized successfully: {stavkeList.Count} items");
-            Console.WriteLine($"First item: {stavkeList[0].Naziv}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Stavke deserialization failed: {ex.Message}");
-            Console.WriteLine($"Inner exception: {ex.InnerException?.Message}");
-        }
         
-        var createdNarudzba = JsonSerializer.Deserialize<Narudzba>(
+        var kreiranaNarudzba = JsonSerializer.Deserialize<Narudzba>(
             await createResponse.Content.ReadAsStringAsync(),
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-        Assert.NotEqual(Guid.Empty, createdNarudzba.NarudzbaId);
-        Assert.Equal("Stol08", createdNarudzba.Stol);
-        Assert.Equal(28.50m, createdNarudzba.UkupnaCijena);
+        Assert.NotEqual(Guid.Empty, kreiranaNarudzba?.NarudzbaId);
+        Assert.Equal("Stol08", kreiranaNarudzba?.Stol);
+        Assert.Equal(28.50m, kreiranaNarudzba?.UkupnaCijena);
         
-        var getResponse = await _client.GetAsync($"/api/narudzbe/{createdNarudzba.NarudzbaId}");
+        var getResponse = await _client.GetAsync($"/api/narudzbe/{kreiranaNarudzba?.NarudzbaId}");
         
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
 
-        var retrievedNarudzba = JsonSerializer.Deserialize<Narudzba>(
+        var dohvacenaNarudzba = JsonSerializer.Deserialize<Narudzba>(
             await getResponse.Content.ReadAsStringAsync(),
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-        Assert.Equal(createdNarudzba.NarudzbaId, retrievedNarudzba.NarudzbaId);
-        Assert.NotNull(retrievedNarudzba.StavkeNarudzbi);
-        Assert.Single(retrievedNarudzba.StavkeNarudzbi);
+        Assert.Equal(kreiranaNarudzba?.NarudzbaId, dohvacenaNarudzba?.NarudzbaId);
+        Assert.NotNull(dohvacenaNarudzba?.StavkeNarudzbi);
+        Assert.Single(dohvacenaNarudzba.StavkeNarudzbi);
     }
 
     [Fact]
-    public async Task GetNonExistentResource_ShouldReturn404()
+    public async Task DohvacanjeNepostojecegKonobara_TrebVratit404()
     {
         var response = await _client.GetAsync($"/api/konobar/{Guid.NewGuid()}");
-        
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
     
-    private async Task<Konobar> CreateKonobar()
+    private async Task<Konobar> KreirajKonobara()
     {
         var konobar = new Konobar
         {
@@ -219,69 +188,10 @@ public class RestaurantApiIntegrationTests : IClassFixture<WebApplicationFactory
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         var response = await _client.PostAsync("/api/konobar", content);
 
-        var createdKonobar = JsonSerializer.Deserialize<Konobar>(
+        var kreiraniKonobar = JsonSerializer.Deserialize<Konobar>(
             await response.Content.ReadAsStringAsync(),
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-        return createdKonobar;
-    }
-
-    private async Task SeedTestData()
-    {
-        using var scope = _scopeFactory.CreateScope(); // ← koristi scope iz factory-a
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-        // Resetiraj sve entitete
-        context.StavkeNarudzbe.RemoveRange(context.StavkeNarudzbe);
-        context.Narudzbe.RemoveRange(context.Narudzbe);
-        context.Konobari.RemoveRange(context.Konobari);
-
-        var konobar = new Konobar
-        {
-            IdKonobar = Guid.NewGuid(),
-            Ime = "Test",
-            Prezime = "Konobar",
-            Telefon = "+385-111222333",
-            Email = "test@test.com"
-        };
-
-        var narudzba = new Narudzba
-        {
-            NarudzbaId = Guid.NewGuid(),
-            VrijemeNarudzbe = DateTime.Now.AddHours(-1),
-            KonobarId = konobar.IdKonobar,
-            Stol = "Stol01",
-            Status = StatusNarudzbe.Zaprimljeno
-        };
-
-        var stavke = new List<StavkaNarudzbe>
-        {
-            new StavkaNarudzbe
-            {
-                StavkaNarudzbeId = Guid.NewGuid(),
-                NarudzbaId = narudzba.NarudzbaId,
-                Naziv = "Hamburger",
-                Kolicina = 2,
-                Cijena = 15.00m,
-                AkcijskaPonuda = false,
-                Status = StatusStavke.NaCekanju
-            },
-            new StavkaNarudzbe
-            {
-                StavkaNarudzbeId = Guid.NewGuid(),
-                NarudzbaId = narudzba.NarudzbaId,
-                Naziv = "Akcijski desert",
-                Kolicina = 1,
-                Cijena = 8.50m,
-                AkcijskaPonuda = true,
-                Status = StatusStavke.Pripremljeno
-            }
-        };
-
-        context.Konobari.Add(konobar);
-        context.Narudzbe.Add(narudzba);
-        context.StavkeNarudzbe.AddRange(stavke);
-
-        await context.SaveChangesAsync();
+        return kreiraniKonobar;
     }
 }
