@@ -13,9 +13,9 @@ public class IspravnostNarudzbeTests
     {
         _validator = new NarudzbaValidator();
     }
-    
+
     [Fact]
-    public void ValidnaNarudzba_ShouldPassValidation()
+    public void ValidacijaNarudzbe_Ispravno()
     {
         var narudzba = new Narudzba
         {
@@ -46,38 +46,35 @@ public class IspravnostNarudzbeTests
                 }
             }
         };
-        
+
         var result = _validator.TestValidate(narudzba);
 
         result.ShouldNotHaveAnyValidationErrors();
-        
+
         Assert.Equal(32.00m, narudzba.UkupnaCijena);
         Assert.Equal(2, narudzba.BrojStavki);
         Assert.Equal(0, narudzba.UkupnoAkcijskihPonuda);
     }
 
     [Fact]
-    public void Narudzba_IzvanRadnogVremena_ShouldFailValidation()
+    public void ValidacijaNarudzbe_Neispravno_NarudzbaPrijeRadnogVremena()
     {
-        // Arrange
         var narudzba = new Narudzba
         {
-            VrijemeNarudzbe = new DateTime(2024, 12, 15, 9, 30, 0), // 09:30 - izvan radnog vremena
+            VrijemeNarudzbe = new DateTime(2024, 12, 15, 9, 30, 0),
             Stol = "Stol05",
             Status = StatusNarudzbe.UPripremi,
             StavkeNarudzbi = new List<StavkaNarudzbe>()
         };
 
-        // Act & Assert
         var result = _validator.TestValidate(narudzba);
         result.ShouldHaveValidationErrorFor(x => x.VrijemeNarudzbe)
-              .WithErrorMessage("Narudžbe se zaprijamju samo između 10:00 i 23:00.");
+            .WithErrorMessage("Narudžbe se zaprijamju samo između 10:00 i 23:00.");
     }
 
     [Fact]
-    public void Narudzba_MetodaPlacanjaSetovanaAStavkeNisuPripremljene_ShouldFailValidation()
+    public void ValidacijaNarudzbe_Neispravno_MetodaPlacanjaPostavljenaAStavkeNisuPripremljene()
     {
-        // Arrange
         var narudzba = new Narudzba
         {
             VrijemeNarudzbe = new DateTime(2024, 12, 15, 14, 30, 0),
@@ -91,19 +88,21 @@ public class IspravnostNarudzbeTests
                     Naziv = "Burger",
                     Kolicina = 1,
                     Cijena = 15.00m,
-                    Status = StatusStavke.NaCekanju 
+                    Status = StatusStavke.NaCekanju
                 }
             }
         };
-        
+
         var result = _validator.TestValidate(narudzba);
         result.ShouldHaveValidationErrorFor(x => x)
-              .WithErrorMessage("Metoda plaćanja mora biti prazna dok sve stavke nisu poslužene. Kada su sve stavke poslužene, za iznose do 50 može se platiti samo gotovinom.");
+            .WithErrorMessage(
+                "Metoda plaćanja mora biti prazna dok sve stavke nisu poslužene. Kada su sve stavke poslužene, za iznose" +
+                    " do 50 može se platiti samo gotovinom.");
     }
 
-    
+
     [Fact]
-    public void Should_Pass_When_VrijemeNarudzbe_Is_Within_Working_Hours()
+    public void ValidacijaNarudzbe_Ispravno_NarudzbaUnutarRadnogVremena()
     {
         var narudzba = new Narudzba
         {
@@ -121,7 +120,7 @@ public class IspravnostNarudzbeTests
     }
 
     [Fact]
-    public void Should_Fail_When_VrijemeNarudzbe_Is_Outside_Working_Hours()
+    public void ValidacijaNarudzbe_Neispravno_NarudzbaNakonRadnogVremena()
     {
         var narudzba = new Narudzba
         {
@@ -137,9 +136,9 @@ public class IspravnostNarudzbeTests
         var result = _validator.TestValidate(narudzba);
         result.ShouldHaveValidationErrorFor(x => x.VrijemeNarudzbe);
     }
-    
+
     [Fact]
-    public void Should_Fail_When_Stol_Is_In_Wrong_Format()
+    public void ValidacijaNarudzbe_Neispravno_StolUKrivomFromatu()
     {
         var narudzba = new Narudzba
         {
@@ -148,7 +147,7 @@ public class IspravnostNarudzbeTests
             Status = StatusNarudzbe.UPripremi,
             StavkeNarudzbi = new List<StavkaNarudzbe>
             {
-                new StavkaNarudzbe { Status = StatusStavke.NaCekanju, AkcijskaPonuda = true}
+                new StavkaNarudzbe { Status = StatusStavke.NaCekanju, AkcijskaPonuda = true }
             }
         };
 
@@ -157,7 +156,7 @@ public class IspravnostNarudzbeTests
     }
 
     [Fact]
-    public void Should_Pass_When_AllStavkeSuPripremljene_And_StatusJePosluzena()
+    public void ValidacijaNarudzbe_Ispravno_SveStavkeSuPripremljeneIStatusJePosluzena()
     {
         var narudzba = new Narudzba()
         {
@@ -177,7 +176,7 @@ public class IspravnostNarudzbeTests
     }
 
     [Fact]
-    public void Should_Fail_When_AnyStavkaNijePripremljena_And_StatusJePosluzena()
+    public void ValidacijaNarudzbe_Neispravno_StavkaNijePripremljenaIStatusJePosluzena()
     {
         var narudzba = new Narudzba
         {
@@ -196,7 +195,7 @@ public class IspravnostNarudzbeTests
     }
 
     [Fact]
-    public void Should_Fail_When_StavkeSuNaCekanju_And_StatusJeNaplacena()
+    public void ValidacijaNarudzbe_Neispravno_StavkeSuNaCekanjuIStatusJeNaplacena()
     {
         var narudzba = new Narudzba
         {
@@ -214,7 +213,7 @@ public class IspravnostNarudzbeTests
     }
 
     [Fact]
-    public void Should_Pass_When_UkupnoAkcijskihPonuda_Is_Less_Than_3()
+    public void ValidacijaNarudzbe_Ispravno_UkupnoAkcijskihPonudaJeManjeOd3()
     {
         var narudzba = new Narudzba
         {
@@ -224,25 +223,25 @@ public class IspravnostNarudzbeTests
             MetodaPlacanja = MetodaPlacanja.Kartica,
             StavkeNarudzbi = new List<StavkaNarudzbe>
             {
-                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 500},
-                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 500}
+                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 500 },
+                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 500 }
             }
         };
 
         var result = _validator.TestValidate(narudzba);
         result.ShouldNotHaveAnyValidationErrors();
     }
-    
+
     [Fact]
-    public void Should_Fail_If_CijenaJeBelow50_And_MetodaPlacanjaNijeGotovina()
+    public void ValidacijaNarudzbe_Neispravno_CijenaJeIspod50IMetodaPlacanjaNijeGotovina()
     {
         var narudzba = new Narudzba
         {
             MetodaPlacanja = MetodaPlacanja.Kartica,
             StavkeNarudzbi = new List<StavkaNarudzbe>
             {
-                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 10},
-                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 5}
+                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 10 },
+                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 5 }
             }
         };
 
@@ -251,15 +250,15 @@ public class IspravnostNarudzbeTests
     }
 
     [Fact]
-    public void Should_Pass_If_CijenajeIspod50_And_MetodaPlacanjaJeGotovina()
+    public void ValidacijaNarudzbe_Ispravno_CijenaJeIspod50IMetodaPlacanjaJeGotovina()
     {
         var narudzba = new Narudzba
         {
             MetodaPlacanja = MetodaPlacanja.Gotovina,
             StavkeNarudzbi = new List<StavkaNarudzbe>
             {
-                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 10},
-                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 5}
+                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 10 },
+                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 5 }
             }
         };
 
@@ -268,15 +267,15 @@ public class IspravnostNarudzbeTests
     }
 
     [Fact]
-    public void Should_Pass_If_CijenaJe50IVise()
+    public void ValidacijaNarudzbe_Ispravno_CijenaJe50IVise()
     {
         var narudzba = new Narudzba
         {
             MetodaPlacanja = MetodaPlacanja.Kartica,
             StavkeNarudzbi = new List<StavkaNarudzbe>
             {
-                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 100},
-                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 50}
+                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 100 },
+                new StavkaNarudzbe { Status = StatusStavke.Pripremljeno, Cijena = 50 }
             }
         };
 
