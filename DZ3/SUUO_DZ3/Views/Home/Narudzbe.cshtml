@@ -397,7 +397,20 @@
             var narudzbaId = (idx !== "" && currentIndex !== null && narudzbe[idx]) ? narudzbe[idx].narudzbaId : null;
 
             var vrijemeInput = document.getElementById('vrijemeInput').value;
-            var vrijemeNarudzbe = vrijemeInput ? new Date(vrijemeInput).toISOString() : new Date().toISOString();
+
+            var vrijemeNarudzbe = null;
+
+            if (vrijemeInput) {
+                try {
+                    vrijemeNarudzbe = vrijemeInput;
+                } catch (e) {
+                    console.warn('Neispravan datum, ostaje null');
+                }
+            }
+            
+            if (!vrijemeNarudzbe && narudzba && narudzba.vrijemeNarudzbe) {
+                vrijemeNarudzbe = narudzba.vrijemeNarudzbe;
+            }
 
             var statusInput = document.getElementById('statusInput').value.trim();
             var status = statusInput || "Zaprimljeno";
