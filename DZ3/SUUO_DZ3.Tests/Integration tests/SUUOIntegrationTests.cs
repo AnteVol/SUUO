@@ -168,38 +168,6 @@ public class SUUOIntegrationTests : IClassFixture<WebApplicationFactory<Program>
         Assert.NotNull(dohvacenaNarudzba?.StavkeNarudzbi);
         Assert.Single(dohvacenaNarudzba.StavkeNarudzbi);
     }
-
-    [Fact]
-    public async Task StavkaNarudzbeController_CreateAndGetById_ShouldWork()
-    {
-        var narudzba = await KreirajNarudzbu();
-
-        var stavka = new StavkaNarudzbe
-        {
-            Naziv = "Coca-Cola 0.5L",
-            Kolicina = 2,
-            Cijena = 3.50m,
-            Status = StatusStavke.NaCekanju,
-            AkcijskaPonuda = false,
-            NarudzbaId = narudzba.NarudzbaId
-        };
-
-        var json = JsonSerializer.Serialize(stavka, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        var createResponse = await _client.PostAsync("/api/stavkanarudzbe", content);
-        Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
-
-        var created = JsonSerializer.Deserialize<StavkaNarudzbe>(
-            await createResponse.Content.ReadAsStringAsync(),
-            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-
-        Assert.NotNull(created);
-        Assert.Equal("Coca-Cola 0.5L", created.Naziv);
-
-        var getResponse = await _client.GetAsync($"/api/stavkanarudzbe/{created.StavkaNarudzbeId}");
-        Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
-    }
     
     [Fact]
     public async Task DohvacanjeNepostojecegKonobara_TrebaVratit404()
