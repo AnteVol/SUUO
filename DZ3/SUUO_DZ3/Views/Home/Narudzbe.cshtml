@@ -441,7 +441,7 @@
                 status: status,
                 konobarId: konobarId,
                 metodaPlacanja: metodaPlacanja,
-                stavkeNarudzbi: narudzbe[idx].stavkeNarudzbi
+                stavkeNarudzbi: narudzbe?.[idx]?.stavkeNarudzbi || []
             };
 
             if (narudzbaId) {
