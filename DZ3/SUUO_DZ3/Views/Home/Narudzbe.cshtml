@@ -225,7 +225,14 @@
                     return resp.json();
                 })
                 .then(data => {
-                    narudzbe = data;
+                    // Osiguraj da svaka narudžba ima stavkeNarudzbi
+                    narudzbe = data.map(n => {
+                        if (!n.stavkeNarudzbi) {
+                            n.stavkeNarudzbi = [];
+                        }
+                        return n;
+                    });
+
                     renderNarudzbeList();
                     if (narudzbe.length > 0) {
                         showDetails(0);
@@ -237,6 +244,7 @@
                     document.getElementById('narudzbaValidationMsg').className = 'text-danger mb-2';
                 });
         }
+
 
         function renderNarudzbeList() {
             var list = document.getElementById('narudzbeList');
@@ -397,7 +405,21 @@
             var narudzbaId = (idx !== "" && currentIndex !== null && narudzbe[idx]) ? narudzbe[idx].narudzbaId : null;
 
             var vrijemeInput = document.getElementById('vrijemeInput').value;
-            var vrijemeNarudzbe = vrijemeInput ? new Date(vrijemeInput).toISOString() : new Date().toISOString();
+
+            var vrijemeNarudzbe = null;
+
+            if (vrijemeInput) {
+                try {
+                    vrijemeNarudzbe = vrijemeInput;
+                } catch (e) {
+                    console.warn('Neispravan datum, ostaje null');
+                }
+            }
+            
+            // Ako je prazno, pokušaj dohvatiti staru vrijednost iz narudzbe:
+            if (!vrijemeNarudzbe && narudzba && narudzba.vrijemeNarudzbe) {
+                vrijemeNarudzbe = narudzba.vrijemeNarudzbe;
+            }
 
             var statusInput = document.getElementById('statusInput').value.trim();
             var status = statusInput || "Zaprimljeno";
@@ -491,15 +513,12 @@
             var rows = document.querySelectorAll('#stavkeTable tbody tr');
 
             for (var i = 0; i < rows.length; i++) {
-                var naziv = rows[i].querySelector('.stavka-naziv').value;
+                var naziv = rows[i].querySelector('.stavka-naziv').value.trim();
                 var kolicina = parseInt(rows[i].querySelector('.stavka-kolicina').value) || 0;
                 var cijena = parseFloat(rows[i].querySelector('.stavka-cijena').value) || 0;
-                var akcija = rows[i].querySelector('.stavka-akcija').checked ? 1 : 0;
+                var akcija = rows[i].querySelector('.stavka-akcija').checked ? true : false;
+                var status = rows[i].querySelector('.stavka-status').value;
                 var stavkaId = rows[i].getAttribute('data-stavka-id');
-
-                if (!stavkaId || stavkaId === '' || stavkaId === 'null' || stavkaId === 'undefined') {
-                    stavkaId = null;
-                }
 
                 if (!naziv || kolicina <= 0 || cijena < 0) {
                     document.getElementById('stavkeValidationMsg').innerText = 'Sve stavke moraju imati naziv, količinu > 0 i cijenu >= 0.';
@@ -508,12 +527,12 @@
                 }
 
                 currentStavke.push({
-                    stavkaId: stavkaId,
+                    stavkaId: stavkaId && stavkaId !== 'null' && stavkaId !== 'undefined' ? stavkaId : null,
                     naziv: naziv,
                     kolicina: kolicina,
                     cijena: cijena,
-                    status: rows[i].querySelector('.stavka-status').value,
-                    akcija: akcija
+                    akcija: akcija,
+                    status: status
                 });
             }
 
@@ -534,50 +553,38 @@
 
             var operations = [];
 
-            operations.push(
-                fetch(`api/stavkanarudzbe?narudzbaId=${narudzba.narudzbaId}`)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Greška pri dohvaćanju postojećih stavki');
-                        return response.json();
-                    })
-                    .then(postojeceStavke => {
-                        var deleteOperations = [];
-                        postojeceStavke.forEach(stavka => {
-                            deleteOperations.push(
-                                fetch(`api/stavkanarudzbe/${stavka.stavkaNarudzbeId}`, {
-                                    method: 'DELETE'
-                                })
-                            );
-                        });
+            currentStavke.forEach(stavka => {
+                var mappedStavka = {
+                    narudzbaId: narudzba.narudzbaId,
+                    kuharId: null,
+                    naziv: stavka.naziv,
+                    kolicina: stavka.kolicina,
+                    cijena: stavka.cijena,
+                    akcijskaPonuda: stavka.akcija,
+                    status: stavka.status
+                };
 
-                        return Promise.all(deleteOperations);
-                    })
-                    .then(() => {
-                        var createOperations = [];
-
-                        currentStavke.forEach(stavka => {
-                            var mappedStavka = {
-                                NarudzbaId: narudzba.narudzbaId,
-                                KuharId: null,
-                                Naziv: stavka.naziv,
-                                Kolicina: stavka.kolicina,
-                                Cijena: stavka.cijena,
-                                AkcijskaPonuda: stavka.akcija === 1,
-                                Status: stavka.status || "NaCekanju"
-                            };
-
-                            createOperations.push(
-                                fetch('api/stavkanarudzbe', {
-                                    method: 'POST',
-                                    headers: {'Content-Type': 'application/json'},
-                                    body: JSON.stringify(mappedStavka)
-                                })
-                            );
-                        });
-
-                        return Promise.all(createOperations);
-                    })
-            );
+                if (stavka.stavkaId) {
+                    // već postoji – UPDATE
+                    mappedStavka.stavkaNarudzbeId = stavka.stavkaId;
+                    operations.push(
+                        fetch(`api/stavkanarudzbe/${stavka.stavkaId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(mappedStavka)
+                        })
+                    );
+                } else {
+                    // nova stavka – CREATE
+                    operations.push(
+                        fetch(`api/stavkanarudzbe`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(mappedStavka)
+                        })
+                    );
+                }
+            });
 
             Promise.all(operations)
                 .then(() => {
@@ -585,7 +592,6 @@
                     document.getElementById('stavkeValidationMsg').className = 'text-success mt-2';
                     stavkeEditMode = false;
                     setStavkeReadonly(true);
-                    localStorage.setItem('stavkeNarudzbi', JSON.stringify(currentStavke))
                 })
                 .catch(err => {
                     console.error('Greška pri spremanju stavki:', err);
@@ -593,6 +599,7 @@
                     document.getElementById('stavkeValidationMsg').className = 'text-danger mt-2';
                 });
         }
+
 
         function showCreateForm() {
             currentIndex = null;
