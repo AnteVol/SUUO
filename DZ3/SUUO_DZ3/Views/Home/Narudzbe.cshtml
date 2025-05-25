@@ -634,6 +634,7 @@
                     document.getElementById('stavkeValidationMsg').innerText = err.message || 'Greška pri spremanju stavki.';
                     document.getElementById('stavkeValidationMsg').className = 'text-danger mt-2';
                 });
+            setTimeout(() => location.reload(), 1000);
         }
 
         function showCreateForm() {
