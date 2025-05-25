@@ -15,7 +15,6 @@
 
 1. Projekt se može klonirati s pomoću naredbe:  
    `git clone https://github.com/AnteVol/SUUO.git`  
-   (Projekt je također predan i u .zip podmapi `Database`)
 
 2. Naredbom `cd SUUO/DZ3` pozicionirajte se u root same programske aplikacije.
 
