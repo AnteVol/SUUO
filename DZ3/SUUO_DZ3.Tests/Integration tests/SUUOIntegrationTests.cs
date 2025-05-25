@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -31,10 +32,7 @@ public class SUUOIntegrationTests : IClassFixture<WebApplicationFactory<Program>
                 if (descriptor != null)
                     services.Remove(descriptor);
 
-                services.AddDbContext<ApplicationDbContext>(options =>
-                {
-                    options.UseInMemoryDatabase(dbName);
-                });
+                services.AddDbContext<ApplicationDbContext>(options => { options.UseInMemoryDatabase(dbName); });
             });
         });
 
@@ -59,9 +57,9 @@ public class SUUOIntegrationTests : IClassFixture<WebApplicationFactory<Program>
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         });
         var content = new StringContent(json, Encoding.UTF8, "application/json");
-        
+
         var createResponse = await _client.PostAsync("/api/konobar", content);
-        
+
         Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
 
         var kreiraniKonobar = JsonSerializer.Deserialize<Konobar>(
@@ -70,9 +68,9 @@ public class SUUOIntegrationTests : IClassFixture<WebApplicationFactory<Program>
 
         Assert.NotEqual(Guid.Empty, kreiraniKonobar?.IdKonobar);
         Assert.Equal("Marko", kreiraniKonobar?.Ime);
-        
+
         var getResponse = await _client.GetAsync($"/api/konobar/{kreiraniKonobar?.IdKonobar}");
-        
+
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
 
         var dohvaceniKonobar = JsonSerializer.Deserialize<Konobar>(
@@ -101,7 +99,7 @@ public class SUUOIntegrationTests : IClassFixture<WebApplicationFactory<Program>
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         });
         var content = new StringContent(json, Encoding.UTF8, "application/json");
-        
+
         var response = await _client.PostAsync("/api/konobar", content);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -136,26 +134,35 @@ public class SUUOIntegrationTests : IClassFixture<WebApplicationFactory<Program>
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         });
         var content = new StringContent(json, Encoding.UTF8, "application/json");
-        
+
         var createResponse = await _client.PostAsync("/api/narudzbe", content);
-        
+
         Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
-        
+
         var kreiranaNarudzba = JsonSerializer.Deserialize<Narudzba>(
             await createResponse.Content.ReadAsStringAsync(),
-            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters = { new JsonStringEnumConverter() }
+            });
 
         Assert.NotEqual(Guid.Empty, kreiranaNarudzba?.NarudzbaId);
         Assert.Equal("Stol08", kreiranaNarudzba?.Stol);
         Assert.Equal(28.50m, kreiranaNarudzba?.UkupnaCijena);
-        
+
         var getResponse = await _client.GetAsync($"/api/narudzbe/{kreiranaNarudzba?.NarudzbaId}");
-        
+
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
 
         var dohvacenaNarudzba = JsonSerializer.Deserialize<Narudzba>(
             await getResponse.Content.ReadAsStringAsync(),
-            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters = { new JsonStringEnumConverter() }
+            });
+        ;
 
         Assert.Equal(kreiranaNarudzba?.NarudzbaId, dohvacenaNarudzba?.NarudzbaId);
         Assert.NotNull(dohvacenaNarudzba?.StavkeNarudzbi);
@@ -163,12 +170,12 @@ public class SUUOIntegrationTests : IClassFixture<WebApplicationFactory<Program>
     }
 
     [Fact]
-    public async Task DohvacanjeNepostojecegKonobara_TrebVratit404()
+    public async Task DohvacanjeNepostojecegKonobara_TrebaVratit404()
     {
         var response = await _client.GetAsync($"/api/konobar/{Guid.NewGuid()}");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
-    
+
     private async Task<Konobar> KreirajKonobara()
     {
         var konobar = new Konobar

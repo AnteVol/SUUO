@@ -1,0 +1,722 @@
+﻿@model List<SUUO_DZ3.Models.Narudzba>
+@{
+    ViewData["Title"] = "Narudžbe";
+    var narudzbe = Model ?? new List<SUUO_DZ3.Models.Narudzba>();
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <h3>Narudžbe</h3>
+        <input type="text" id="searchBox" class="form-control mb-2" placeholder="Pretraži po stolu ili konobaru..."
+               oninput="filterNarudzbe()">
+        <ul class="list-group" id="narudzbeList">
+            @for (int i = 0; i < narudzbe.Count; i++)
+            {
+                <li class="list-group-item narudzba-item" data-index="@i" onclick="showDetails(@i)">
+                    <strong>Stol:</strong> @narudzbe[i].Stol <br/>
+                    <strong>Vrijeme:</strong> @narudzbe[i].VrijemeNarudzbe.ToString("g") <br/>
+                    <strong>Status:</strong> @narudzbe[i].Status
+                </li>
+            }
+        </ul>
+        <button class="btn btn-primary mt-3 w-100" onclick="showCreateForm()">Nova narudžba</button>
+    </div>
+
+    <div class="col-md-8">
+        <div id="detailForm" style="display:none;">
+            <h3>Detalji narudžbe</h3>
+
+            <form id="narudzbaForm" autocomplete="off" onsubmit="event.preventDefault(); saveNarudzba();">
+                <input type="hidden" id="narudzbaIndex"/>
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Osnovni podaci narudžbe</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label>Stol</label>
+                                    <input type="text" class="form-control" id="stolInput" required
+                                           placeholder="Stol01, Stol02..."/>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Vrijeme narudžbe</label>
+                                    <input type="datetime-local" class="form-control" id="vrijemeInput" required/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label>Status</label>
+                                    <select class="form-control" id="statusInput">
+                                        <option value="Zaprimljeno">Zaprimljeno</option>
+                                        <option value="UPripremi">U pripremi</option>
+                                        <option value="Posluzeno">Posluženo</option>
+                                        <option value="Naplaceno">Naplaćeno</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Konobar</label>
+                                    <select class="form-control" id="konobarInput" required>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Metoda plaćanja</label>
+                                    <select class="form-control" id="metodaPlacanja">
+                                        <option value="">-- Odaberite metodu --</option>
+                                        <option value="Gotovina">Gotovina</option>
+                                        <option value="Kartica">Kartica</option>
+                                        <option value="NaRate">Na rate</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Spremi narudžbu
+                            </button>
+                            <button type="button" class="btn btn-warning" onclick="editNarudzba()">
+                                <i class="fas fa-edit"></i> Uredi narudžbu
+                            </button>
+                            <button type="button" class="btn btn-danger" onclick="deleteNarudzba()">
+                                <i class="fas fa-trash"></i> Obriši narudžbu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="narudzbaValidationMsg" class="text-danger mb-2"></div>
+            </form>
+
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Stavke narudžbe</h5>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="addStavka()">
+                        <i class="fas fa-plus"></i> Nova stavka
+                    </button>
+                </div>
+                <div class="card-body">
+                    <form id="stavkeForm" autocomplete="off" onsubmit="event.preventDefault(); saveStavke();">
+                        <table class="table table-bordered table-sm" id="stavkeTable">
+                            <thead>
+                            <tr>
+                                <th>Naziv</th>
+                                <th>Količina</th>
+                                <th>Cijena</th>
+                                <th>Status</th>
+                                <th width="100">Akcija</th>
+                                <th width="100" class="ukloni-column">Ukloni stavku</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- Popunjava se JS-om -->
+                            </tbody>
+                        </table>
+                        <div class="text-end mt-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Spremi stavke
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="editStavke()">
+                                <i class="fas fa-edit"></i> Uredi stavke
+                            </button>
+                        </div>
+                    </form>
+                    <div id="stavkeValidationMsg" class="text-danger mt-2"></div>
+                </div>
+            </div>
+
+            <!-- Navigacija između narudžbi -->
+            <div class="d-flex justify-content-between mt-3">
+                <button type="button" class="btn btn-outline-secondary" onclick="prevNarudzba()">
+                    <i class="fas fa-chevron-left"></i> Prethodna
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="nextNarudzba()">
+                    Sljedeća <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="noSelection" class="text-muted text-center" style="margin-top:2rem;">
+            <i class="fas fa-clipboard-list fa-3x mb-3 opacity-25"></i>
+            <p><em>Odaberite narudžbu za prikaz detalja.</em></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e3e6f0;
+    }
+
+    .card-header {
+        background-color: #f8f9fc;
+        border-bottom: 1px solid #e3e6f0;
+    }
+
+    .narudzba-item:hover {
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+
+    .narudzba-item.active {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-group-sm > .btn, .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .table-sm th, .table-sm td {
+        padding: 0.3rem;
+    }
+
+    .stavke-readonly input {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        pointer-events: none;
+    }
+
+    .stavke-readonly .btn {
+        display: none;
+    }
+
+    .stavke-readonly .ukloni-column,
+    .stavke-readonly .ukloni-cell {
+        display: none;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        var narudzbe = [];
+        var konobari = [];
+        var currentIndex = null;
+        var stavkeEditMode = false;
+        var narudzbaEditMode = false;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            getNarudzbe();
+            getKonobari();
+        });
+
+        function getKonobari() {
+            fetch('/api/konobar')
+                .then(resp => {
+                    if (!resp.ok) throw new Error('Greška pri dohvaćanju konobara.');
+                    return resp.json();
+                })
+                .then(data => {
+                    konobari = data;
+                    fillKonobarDropdown();
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('narudzbaValidationMsg').innerText = 'Greška pri dohvaćanju konobara.';
+                    document.getElementById('narudzbaValidationMsg').className = 'text-danger mb-2';
+                });
+        }
+
+        function getNarudzbe() {
+            fetch('/api/narudzbe')
+                .then(resp => {
+                    if (!resp.ok) throw new Error('Greška pri dohvaćanju narudžbi.');
+                    return resp.json();
+                })
+                .then(data => {
+                    narudzbe = data;
+                    renderNarudzbeList();
+                    if (narudzbe.length > 0) {
+                        showDetails(0);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('narudzbaValidationMsg').innerText = 'Greška pri dohvaćanju narudžbi.';
+                    document.getElementById('narudzbaValidationMsg').className = 'text-danger mb-2';
+                });
+        }
+
+        function renderNarudzbeList() {
+            var list = document.getElementById('narudzbeList');
+            list.innerHTML = '';
+
+            narudzbe.forEach(function (narudzba, index) {
+                var li = document.createElement('li');
+                li.className = 'list-group-item narudzba-item';
+                li.setAttribute('data-index', index);
+                li.onclick = function () {
+                    showDetails(index);
+                };
+
+                var datum = narudzba.vrijemeNarudzbe ? new Date(narudzba.vrijemeNarudzbe).toLocaleString('hr-HR') : '';
+
+                li.innerHTML = `
+                <strong>Stol:</strong> ${narudzba.stol || ''} <br />
+                <strong>Vrijeme:</strong> ${datum} <br />
+                <strong>Status:</strong> ${narudzba.status || ''}
+            `;
+
+                list.appendChild(li);
+            });
+        }
+
+        function filterNarudzbe() {
+            var filter = document.getElementById('searchBox').value.toLowerCase();
+            var items = document.querySelectorAll('.narudzba-item');
+            narudzbe.forEach(function (n, i) {
+                var text = (n.stol || '') + ' ' + (n.konobar?.ime || '');
+                items[i].style.display = text.toLowerCase().includes(filter) ? '' : 'none';
+            });
+        }
+
+        function showDetails(idx) {
+            currentIndex = idx;
+            var n = narudzbe[idx];
+            document.getElementById('narudzbaIndex').value = idx;
+            document.getElementById('stolInput').value = n.stol || '';
+            localStorage.setItem('stavkeNarudzbi', JSON.stringify(n.stavkeNarudzbi));
+
+            if (n.vrijemeNarudzbe) {
+                var datum = new Date(n.vrijemeNarudzbe);
+                var formatiraniDatum = datum.getFullYear() + '-' +
+                    String(datum.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(datum.getDate()).padStart(2, '0') + 'T' +
+                    String(datum.getHours()).padStart(2, '0') + ':' +
+                    String(datum.getMinutes()).padStart(2, '0');
+                document.getElementById('vrijemeInput').value = formatiraniDatum;
+            } else {
+                document.getElementById('vrijemeInput').value = '';
+            }
+
+            document.getElementById('statusInput').value = n.status || '';
+            document.getElementById('metodaPlacanja').value = n.metodaPlacanja || '';
+            fillKonobarDropdown(n.konobar?.idKonobar);
+            renderStavke(n.stavkeNarudzbi || []);
+
+            setNarudzbaReadonly(!narudzbaEditMode);
+            setStavkeReadonly(!stavkeEditMode);
+
+            document.getElementById('detailForm').style.display = '';
+            document.getElementById('noSelection').style.display = 'none';
+            document.getElementById('narudzbaValidationMsg').innerText = '';
+            document.getElementById('stavkeValidationMsg').innerText = '';
+
+            document.querySelectorAll('.narudzba-item').forEach(item => item.classList.remove('active'));
+            document.querySelector(`.narudzba-item[data-index="${idx}"]`).classList.add('active');
+        }
+
+        function setNarudzbaReadonly(readonly) {
+            const inputs = ['stolInput', 'vrijemeInput', 'statusInput', 'konobarInput', 'metodaPlacanja'];
+            inputs.forEach(id => {
+                const element = document.getElementById(id);
+                if (readonly) {
+                    element.setAttribute('disabled', true);
+                    element.style.backgroundColor = '#f8f9fa';
+                } else {
+                    element.removeAttribute('disabled');
+                    element.style.backgroundColor = '';
+                }
+            });
+        }
+
+        function setStavkeReadonly(readonly) {
+            const table = document.getElementById('stavkeTable');
+            if (readonly) {
+                table.classList.add('stavke-readonly');
+            } else {
+                table.classList.remove('stavke-readonly');
+            }
+        }
+
+        function editNarudzba() {
+            narudzbaEditMode = true;
+            setNarudzbaReadonly(false);
+            document.getElementById('narudzbaValidationMsg').innerText = 'Način uređivanja narudžbe aktiviran.';
+            document.getElementById('narudzbaValidationMsg').className = 'text-info mb-2';
+        }
+
+        function deleteNarudzba() {
+            var idx = document.getElementById('narudzbaIndex').value;
+            if (idx === "" || !narudzbe[idx] || !narudzbe[idx].narudzbaId) {
+                document.getElementById('narudzbaValidationMsg').innerText = 'Nije odabrana narudžba za brisanje.';
+                document.getElementById('narudzbaValidationMsg').className = 'text-danger mb-2';
+                return;
+            }
+            var narudzbaId = narudzbe[idx].narudzbaId;
+            if (confirm('Jeste li sigurni da želite obrisati ovu narudžbu?')) {
+                fetch(`/api/narudzbe/${narudzbaId}`, {
+                    method: 'DELETE'
+                })
+            .then(resp => {
+                    if (!resp.ok) throw new Error('Greška pri brisanju narudžbe.');
+                    document.getElementById('narudzbaValidationMsg').innerText = 'Narudžba uspješno obrisana.';
+                    document.getElementById('narudzbaValidationMsg').className = 'text-success mb-2';
+                    setTimeout(() => location.reload(), 1000);
+                })
+                    .catch(err => {
+                        document.getElementById('narudzbaValidationMsg').innerText = err.message || 'Greška pri brisanju narudžbe.';
+                        document.getElementById('narudzbaValidationMsg').className = 'text-danger mb-2';
+                    });
+            }
+        }
+
+        function editStavke() {
+            stavkeEditMode = true;
+            setStavkeReadonly(false);
+            document.getElementById('stavkeValidationMsg').innerText = 'Način uređivanja stavki aktiviran.';
+            document.getElementById('stavkeValidationMsg').className = 'text-info mt-2';
+        }
+
+        function prevNarudzba() {
+            if (currentIndex > 0) {
+                narudzbaEditMode = false;
+                stavkeEditMode = false;
+                showDetails(currentIndex - 1);
+            }
+        }
+
+        function nextNarudzba() {
+            if (currentIndex < narudzbe.length - 1) {
+                narudzbaEditMode = false;
+                stavkeEditMode = false;
+                showDetails(currentIndex + 1);
+            }
+        }
+
+        function saveNarudzba() {
+            var konobarId = document.getElementById('konobarInput').value;
+            if (!konobarId) {
+                document.getElementById('narudzbaValidationMsg').innerText = 'Odaberite konobara.';
+                document.getElementById('narudzbaValidationMsg').className = 'text-danger mb-2';
+                return;
+            }
+
+            var idx = document.getElementById('narudzbaIndex').value;
+            var narudzbaId = (idx !== "" && currentIndex !== null && narudzbe[idx]) ? narudzbe[idx].narudzbaId : null;
+
+            var vrijemeInput = document.getElementById('vrijemeInput').value;
+            var vrijemeNarudzbe = vrijemeInput ? new Date(vrijemeInput).toISOString() : new Date().toISOString();
+
+            var statusInput = document.getElementById('statusInput').value.trim();
+            var status = statusInput || "Zaprimljeno";
+
+            var validStatuses = ["Zaprimljeno", "UPripremi", "Posluzeno", "Naplaceno"];
+            if (!validStatuses.includes(status)) {
+                document.getElementById('narudzbaValidationMsg').innerText = 'Status mora biti jedan od: Zaprimljeno, UPripremi, Posluzeno, Naplaceno';
+                document.getElementById('narudzbaValidationMsg').className = 'text-danger mb-2';
+                return;
+            }
+
+            var metodaPlacanjaInput = document.getElementById('metodaPlacanja').value.trim();
+            var metodaPlacanja = null;
+            if (metodaPlacanjaInput) {
+                var validMetode = ["Gotovina", "Kartica", "NaRate"];
+                if (validMetode.includes(metodaPlacanjaInput)) {
+                    metodaPlacanja = metodaPlacanjaInput;
+                } else {
+                    document.getElementById('narudzbaValidationMsg').innerText = 'Metoda plaćanja mora biti jedna od: Gotovina, Kartica, NaRate ili prazna';
+                    document.getElementById('narudzbaValidationMsg').className = 'text-danger mb-2';
+                    return;
+                }
+            }
+
+            var narudzba = {
+                stol: document.getElementById('stolInput').value.trim(),
+                vrijemeNarudzbe: vrijemeNarudzbe,
+                status: status,
+                konobarId: konobarId,
+                metodaPlacanja: metodaPlacanja,
+                stavkeNarudzbi: []
+            };
+
+            if (narudzbaId) {
+                narudzba.narudzbaId = narudzbaId;
+            }
+
+            var isEdit = !!narudzbaId;
+            var url = isEdit ? `/api/narudzbe/${narudzbaId}` : '/api/narudzbe';
+            var method = isEdit ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(narudzba)
+            })
+                .then(resp => {
+                    if (!resp.ok) {
+                        return resp.json().then(err => {
+                            throw new Error(JSON.stringify(err));
+                        });
+                    }
+                    if (resp.status === 204) {
+                        return null;
+                    }
+                    return resp.json();
+                })
+                .then(data => {
+                    document.getElementById('narudzbaValidationMsg').innerText = 'Narudžba uspješno spremljena.';
+                    document.getElementById('narudzbaValidationMsg').className = 'text-success mb-2';
+                    narudzbaEditMode = false;
+                    setNarudzbaReadonly(true);
+                    setTimeout(() => location.reload(), 1500);
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    var errorMessage = 'Greška pri spremanju narudžbe.';
+
+                    try {
+                        var errorObj = JSON.parse(err.message);
+                        if (errorObj.errors) {
+                            var messages = [];
+                            for (var field in errorObj.errors) {
+                                if (errorObj.errors[field] && Array.isArray(errorObj.errors[field])) {
+                                    messages.push(...errorObj.errors[field]);
+                                }
+                            }
+                            errorMessage = messages.join(' ');
+                        }
+                    } catch (e) {
+                        errorMessage = err.message;
+                    }
+
+                    document.getElementById('narudzbaValidationMsg').innerText = errorMessage;
+                    document.getElementById('narudzbaValidationMsg').className = 'text-danger mb-2';
+                });
+        }
+
+        function saveStavke() {
+            var currentStavke = [];
+            var rows = document.querySelectorAll('#stavkeTable tbody tr');
+
+            for (var i = 0; i < rows.length; i++) {
+                var naziv = rows[i].querySelector('.stavka-naziv').value;
+                var kolicina = parseInt(rows[i].querySelector('.stavka-kolicina').value) || 0;
+                var cijena = parseFloat(rows[i].querySelector('.stavka-cijena').value) || 0;
+                var akcija = rows[i].querySelector('.stavka-akcija').checked ? 1 : 0;
+                var stavkaId = rows[i].getAttribute('data-stavka-id');
+
+                if (!stavkaId || stavkaId === '' || stavkaId === 'null' || stavkaId === 'undefined') {
+                    stavkaId = null;
+                }
+
+                if (!naziv || kolicina <= 0 || cijena < 0) {
+                    document.getElementById('stavkeValidationMsg').innerText = 'Sve stavke moraju imati naziv, količinu > 0 i cijenu >= 0.';
+                    document.getElementById('stavkeValidationMsg').className = 'text-danger mt-2';
+                    return;
+                }
+
+                currentStavke.push({
+                    stavkaId: stavkaId,
+                    naziv: naziv,
+                    kolicina: kolicina,
+                    cijena: cijena,
+                    status: rows[i].querySelector('.stavka-status').value,
+                    akcija: akcija
+                });
+            }
+
+            if (currentStavke.length === 0) {
+                document.getElementById('stavkeValidationMsg').innerText = 'Dodajte barem jednu stavku.';
+                document.getElementById('stavkeValidationMsg').className = 'text-danger mt-2';
+                return;
+            }
+
+            var idx = document.getElementById('narudzbaIndex').value;
+            var narudzba = (idx !== "" && narudzbe[idx]) ? narudzbe[idx] : null;
+
+            if (!narudzba || !narudzba.narudzbaId) {
+                document.getElementById('stavkeValidationMsg').innerText = 'Prvo spremite osnovne podatke narudžbe.';
+                document.getElementById('stavkeValidationMsg').className = 'text-warning mt-2';
+                return;
+            }
+
+            var operations = [];
+
+            operations.push(
+                fetch(`api/stavkanarudzbe?narudzbaId=${narudzba.narudzbaId}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Greška pri dohvaćanju postojećih stavki');
+                        return response.json();
+                    })
+                    .then(postojeceStavke => {
+                        var deleteOperations = [];
+                        postojeceStavke.forEach(stavka => {
+                            deleteOperations.push(
+                                fetch(`api/stavkanarudzbe/${stavka.stavkaNarudzbeId}`, {
+                                    method: 'DELETE'
+                                })
+                            );
+                        });
+
+                        return Promise.all(deleteOperations);
+                    })
+                    .then(() => {
+                        var createOperations = [];
+
+                        currentStavke.forEach(stavka => {
+                            var mappedStavka = {
+                                NarudzbaId: narudzba.narudzbaId,
+                                KuharId: null,
+                                Naziv: stavka.naziv,
+                                Kolicina: stavka.kolicina,
+                                Cijena: stavka.cijena,
+                                AkcijskaPonuda: stavka.akcija === 1,
+                                Status: stavka.status || "NaCekanju"
+                            };
+
+                            createOperations.push(
+                                fetch('api/stavkanarudzbe', {
+                                    method: 'POST',
+                                    headers: {'Content-Type': 'application/json'},
+                                    body: JSON.stringify(mappedStavka)
+                                })
+                            );
+                        });
+
+                        return Promise.all(createOperations);
+                    })
+            );
+
+            Promise.all(operations)
+                .then(() => {
+                    document.getElementById('stavkeValidationMsg').innerText = 'Stavke uspješno spremljene.';
+                    document.getElementById('stavkeValidationMsg').className = 'text-success mt-2';
+                    stavkeEditMode = false;
+                    setStavkeReadonly(true);
+                    localStorage.setItem('stavkeNarudzbi', JSON.stringify(currentStavke))
+                })
+                .catch(err => {
+                    console.error('Greška pri spremanju stavki:', err);
+                    document.getElementById('stavkeValidationMsg').innerText = err.message || 'Greška pri spremanju stavki.';
+                    document.getElementById('stavkeValidationMsg').className = 'text-danger mt-2';
+                });
+        }
+
+        function showCreateForm() {
+            currentIndex = null;
+            narudzbaEditMode = true;
+            stavkeEditMode = true;
+            document.getElementById('narudzbaForm').reset();
+            document.getElementById('stavkeForm').reset();
+
+            document.getElementById('narudzbaIndex').value = '';
+
+            var now = new Date();
+            var formatiraniDatum = now.getFullYear() + '-' +
+                String(now.getMonth() + 1).padStart(2, '0') + '-' +
+                String(now.getDate()).padStart(2, '0') + 'T' +
+                String(now.getHours()).padStart(2, '0') + ':' +
+                String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('vrijemeInput').value = formatiraniDatum;
+
+            fillKonobarDropdown();
+            renderStavke([]);
+            setNarudzbaReadonly(false);
+            setStavkeReadonly(false);
+            document.getElementById('detailForm').style.display = '';
+            document.getElementById('noSelection').style.display = 'none';
+            document.getElementById('narudzbaValidationMsg').innerText = '';
+            document.getElementById('stavkeValidationMsg').innerText = '';
+
+            document.querySelectorAll('.narudzba-item').forEach(item => item.classList.remove('active'));
+        }
+
+        function fillKonobarDropdown(selectedId) {
+            var ddl = document.getElementById('konobarInput');
+            ddl.innerHTML = '';
+
+            var emptyOption = document.createElement('option');
+            emptyOption.value = '';
+            emptyOption.text = '-- Odaberite konobara --';
+            ddl.appendChild(emptyOption);
+
+            if (konobari.length === 0) {
+                var noDataOption = document.createElement('option');
+                noDataOption.value = '';
+                noDataOption.text = '(nema podataka)';
+                ddl.appendChild(noDataOption);
+                return;
+            }
+
+            konobari.forEach(function (k) {
+                var opt = document.createElement('option');
+                opt.value = k.idKonobar;
+                opt.text = k.ime + ' ' + k.prezime;
+                if (selectedId && k.idKonobar === selectedId) opt.selected = true;
+                ddl.appendChild(opt);
+            });
+        }
+
+        function renderStavke(stavke) {
+            var tbody = document.getElementById('stavkeTable').querySelector('tbody');
+            tbody.innerHTML = '';
+            stavke.forEach(function (s, idx) {
+                var row = document.createElement('tr');
+                row.setAttribute('data-stavka-id', s.stavkaId || '');
+
+                var statusOptions = ['NaCekanju', 'UPripremi', 'Pripremljeno'].map(status => {
+                    var selected = (s.status === status) ? 'selected' : '';
+                    var displayText = status === 'NaCekanju' ? 'Na Čekanju' : (status === 'UPripremi' ? 'U Pripremi' : 'Pripremljeno');
+                    return `<option value="${status}" ${selected}>${displayText}</option>`;
+                }).join('');
+
+                row.innerHTML = `
+            <td><input class="form-control form-control-sm stavka-naziv" value="${s.naziv || ''}" /></td>
+            <td><input type="number" min="1" class="form-control form-control-sm stavka-kolicina" value="${s.kolicina || 1}" /></td>
+            <td><input type="number" min="0" step="0.01" class="form-control form-control-sm stavka-cijena" value="${s.cijena || 0}" /></td>
+            <td>
+                <select class="form-control form-control-sm stavka-status">
+                    ${statusOptions}
+                </select>
+            </td>
+            <td class="text-center">
+                <input type="checkbox" class="form-check-input stavka-akcija" ${(s.akcija == 1 || s.akcija === true) ? 'checked' : ''} />
+            </td>
+            <td class="text-center ukloni-cell">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeStavka(this)" title="Ukloni stavku">
+                    <i class="fas fa-times"></i>
+                </button>
+            </td>`;
+
+                tbody.appendChild(row);
+            });
+        }
+
+        function addStavka() {
+            var tbody = document.getElementById('stavkeTable').querySelector('tbody');
+            var row = document.createElement('tr');
+            row.setAttribute('data-stavka-id', '');
+            row.innerHTML = `
+        <td><input class="form-control form-control-sm stavka-naziv" placeholder="Naziv stavke" /></td>
+        <td><input type="number" min="1" class="form-control form-control-sm stavka-kolicina" value="1" /></td>
+        <td><input type="number" min="0" step="0.01" class="form-control form-control-sm stavka-cijena" value="0" placeholder="0.00" /></td>
+        <td>
+            <select class="form-control form-control-sm stavka-status">
+                <option value="NaCekanju" selected>Na Čekanju</option>
+                <option value="UPripremi">U Pripremi</option>
+                <option value="Pripremljeno">Pripremljeno</option>
+            </select>
+        </td>
+        <td class="text-center">
+            <input type="checkbox" class="form-check-input stavka-akcija" />
+        </td>
+        <td class="text-center ukloni-cell">
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeStavka(this)" title="Ukloni stavku">
+                <i class="fas fa-times"></i>
+            </button>
+        </td>`;
+            tbody.appendChild(row);
+        }
+
+
+        function removeStavka(btn) {
+            btn.closest('tr').remove();
+        }
+
+        if (narudzbe.length > 0) {
+            showDetails(0);
+        }
+    </script>
+}

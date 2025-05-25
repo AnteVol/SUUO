@@ -46,6 +46,8 @@ public class StavkaNarudzbeController : ControllerBase
     {
         if (stavka == null)
             return BadRequest();
+        
+        Console.Write(stavka.Naziv);
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);

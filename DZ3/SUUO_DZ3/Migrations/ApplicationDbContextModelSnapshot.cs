@@ -130,6 +130,9 @@ namespace SUUO_DZ3.Migrations
                     b.Property<int>("Kolicina")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("KuharId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("NarudzbaId")
                         .HasColumnType("uniqueidentifier");
 
@@ -142,9 +145,13 @@ namespace SUUO_DZ3.Migrations
 
                     b.HasKey("StavkaNarudzbeId");
 
+                    b.HasIndex("KuharId");
+
                     b.HasIndex("NarudzbaId");
 
                     b.ToTable("StavkeNarudzbe");
+
+                    b.HasAnnotation("Relational:JsonPropertyName", "stavkeNarudzbi");
                 });
 
             modelBuilder.Entity("SUUO_DZ3.Models.Narudzba", b =>
@@ -160,11 +167,17 @@ namespace SUUO_DZ3.Migrations
 
             modelBuilder.Entity("SUUO_DZ3.Models.StavkaNarudzbe", b =>
                 {
+                    b.HasOne("SUUO_DZ3.Models.Kuhar", "Kuhar")
+                        .WithMany()
+                        .HasForeignKey("KuharId");
+
                     b.HasOne("SUUO_DZ3.Models.Narudzba", null)
                         .WithMany("StavkeNarudzbi")
                         .HasForeignKey("NarudzbaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Kuhar");
                 });
 
             modelBuilder.Entity("SUUO_DZ3.Models.Narudzba", b =>

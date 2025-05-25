@@ -58,7 +58,12 @@ public class NarudzbaValidator : AbstractValidator<Narudzba>
         bool sveStavkePripremljene = 
             narudzba.StavkeNarudzbi != null && 
             narudzba.StavkeNarudzbi.Any() && 
-            narudzba.StavkeNarudzbi.All(stavka => stavka.Status == StatusStavke.Pripremljeno);;
+            narudzba.StavkeNarudzbi.All(stavka => stavka.Status == StatusStavke.Pripremljeno);
+        
+        if (narudzba.StavkeNarudzbi == null || narudzba.StavkeNarudzbi.Count == 0)
+        {
+            return narudzba.MetodaPlacanja == null;
+        }
 
         if (!sveStavkePripremljene)
         {

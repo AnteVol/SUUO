@@ -1,0 +1,377 @@
+﻿@model List<SUUO_DZ3.Models.Konobar>
+@{
+    ViewData["Title"] = "Konobari";
+    var konobari = Model ?? new List<SUUO_DZ3.Models.Konobar>();
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <h3>Konobari</h3>
+        <input type="text" id="searchBox" class="form-control mb-2" placeholder="Pretraži po imenu, prezimenu ili emailu..." oninput="filterKonobari()">
+        <ul class="list-group" id="konobariList">
+            @for (int i = 0; i < konobari.Count; i++)
+            {
+                <li class="list-group-item konobar-item @(konobari[i].Aktivan ? "" : "text-muted")" data-index="@i" onclick="showDetails(@i)">
+                    <strong>@konobari[i].Ime @konobari[i].Prezime</strong> <br />
+                    <small>@konobari[i].Email</small> <br />
+                    <small>@konobari[i].Telefon</small>
+                    @if (!konobari[i].Aktivan)
+                    {
+                        <span class="badge bg-secondary ms-2">Neaktivan</span>
+                    }
+                </li>
+            }
+        </ul>
+        <button class="btn btn-primary mt-3 w-100" onclick="showCreateForm()">Novi konobar</button>
+    </div>
+
+    <div class="col-md-8">
+        <div id="detailForm" style="display:none;">
+            <h3>Detalji konobara</h3>
+
+            <form id="konobarForm" autocomplete="off" onsubmit="event.preventDefault(); saveKonobar();">
+                <input type="hidden" id="konobarIndex" />
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Podaci konobara</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label>Ime</label>
+                                    <input type="text" class="form-control" id="imeInput" required placeholder="Ime konobara" />
+                                </div>
+                                <div class="mb-2">
+                                    <label>Prezime</label>
+                                    <input type="text" class="form-control" id="prezimeInput" required placeholder="Prezime konobara" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label>Telefon</label>
+                                    <input type="text" class="form-control" id="telefonInput" required placeholder="+385-XX-XXXXXXX" />
+                                    <small class="text-muted">Format: +385-XX-XXXXXXX</small>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Email</label>
+                                    <input type="email" class="form-control" id="emailInput" required placeholder="email@example.com" />
+                                </div>
+                                <div class="mb-2">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="aktivanInput" checked />
+                                        <label class="form-check-label" for="aktivanInput">Aktivan</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Spremi konobara
+                            </button>
+                            <button type="button" class="btn btn-warning" onclick="editKonobar()">
+                                <i class="fas fa-edit"></i> Uredi konobara
+                            </button>
+                            <button type="button" class="btn btn-danger" onclick="deleteKonobar()">
+                                <i class="fas fa-trash"></i> Obriši konobara
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="konobarValidationMsg" class="text-danger mb-2"></div>
+            </form>
+
+            <div class="d-flex justify-content-between mt-3">
+                <button type="button" class="btn btn-outline-secondary" onclick="prevKonobar()">
+                    <i class="fas fa-chevron-left"></i> Prethodni
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="nextKonobar()">
+                    Sljedeći <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="noSelection" class="text-muted text-center" style="margin-top:2rem;">
+            <i class="fas fa-user-tie fa-3x mb-3 opacity-25"></i>
+            <p><em>Odaberite konobara za prikaz detalja.</em></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: 1px solid #e3e6f0;
+    }
+
+    .card-header {
+        background-color: #f8f9fc;
+        border-bottom: 1px solid #e3e6f0;
+    }
+
+    .konobar-item:hover {
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+
+    .konobar-item.active {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .konobar-item.active .badge {
+        background-color: rgba(255,255,255,0.3) !important;
+    }
+
+    .btn-group-sm > .btn, .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+</style>
+
+@section Scripts {
+<script>
+    var konobari = [];
+    var currentIndex = null;
+    var editMode = false;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        getKonobari();
+    });
+
+    function getKonobari() {
+        fetch('/api/konobar')
+            .then(resp => {
+                if (!resp.ok) throw new Error('Greška pri dohvaćanju konobara.');
+                return resp.json();
+            })
+            .then(data => {
+                konobari = data;
+                console.log('Konobari dohvaćeni:', konobari);
+                renderKonobariList();
+                if (konobari.length > 0) {
+                    showDetails(0);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('konobarValidationMsg').innerText = 'Greška pri dohvaćanju konobara.';
+                document.getElementById('konobarValidationMsg').className = 'text-danger mb-2';
+            });
+    }
+
+    function renderKonobariList() {
+        var list = document.getElementById('konobariList');
+        list.innerHTML = '';
+
+        konobari.forEach(function(konobar, index) {
+            var li = document.createElement('li');
+            li.className = 'list-group-item konobar-item';
+            if (!konobar.aktivan) {
+                li.classList.add('text-muted');
+            }
+            li.setAttribute('data-index', index);
+            li.onclick = function() { showDetails(index); };
+
+            var statusBadge = konobar.aktivan ? '' : '<span class="badge bg-secondary ms-2">Neaktivan</span>';
+
+            li.innerHTML = `
+                <strong>${konobar.ime || ''} ${konobar.prezime || ''}</strong> <br />
+                <small>${konobar.email || ''}</small> <br />
+                <small>${konobar.telefon || ''}</small>
+                ${statusBadge}
+            `;
+
+            list.appendChild(li);
+        });
+    }
+
+    function filterKonobari() {
+        var filter = document.getElementById('searchBox').value.toLowerCase();
+        var items = document.querySelectorAll('.konobar-item');
+        konobari.forEach(function(k, i) {
+            var text = (k.ime || '') + ' ' + (k.prezime || '') + ' ' + (k.email || '');
+            items[i].style.display = text.toLowerCase().includes(filter) ? '' : 'none';
+        });
+    }
+
+    function showDetails(idx) {
+        currentIndex = idx;
+        var k = konobari[idx];
+        document.getElementById('konobarIndex').value = idx;
+        document.getElementById('imeInput').value = k.ime || '';
+        document.getElementById('prezimeInput').value = k.prezime || '';
+        document.getElementById('telefonInput').value = k.telefon || '';
+        document.getElementById('emailInput').value = k.email || '';
+        document.getElementById('aktivanInput').checked = k.aktivan !== false;
+
+        setReadonly(!editMode);
+
+        document.getElementById('detailForm').style.display = '';
+        document.getElementById('noSelection').style.display = 'none';
+        document.getElementById('konobarValidationMsg').innerText = '';
+
+        document.querySelectorAll('.konobar-item').forEach(item => item.classList.remove('active'));
+        document.querySelector(`.konobar-item[data-index="${idx}"]`).classList.add('active');
+    }
+
+    function setReadonly(readonly) {
+        const inputs = ['imeInput', 'prezimeInput', 'telefonInput', 'emailInput', 'aktivanInput'];
+        inputs.forEach(id => {
+            const element = document.getElementById(id);
+            if (readonly) {
+                element.setAttribute('disabled', true);
+                element.style.backgroundColor = '#f8f9fa';
+            } else {
+                element.removeAttribute('disabled');
+                element.style.backgroundColor = '';
+            }
+        });
+    }
+
+    function editKonobar() {
+        editMode = true;
+        setReadonly(false);
+        document.getElementById('konobarValidationMsg').innerText = 'Način uređivanja konobara aktiviran.';
+        document.getElementById('konobarValidationMsg').className = 'text-info mb-2';
+    }
+
+    function prevKonobar() {
+        if (currentIndex > 0) {
+            editMode = false;
+            showDetails(currentIndex - 1);
+        }
+    }
+
+    function nextKonobar() {
+        if (currentIndex < konobari.length - 1) {
+            editMode = false;
+            showDetails(currentIndex + 1);
+        }
+    }
+
+    function saveKonobar() {
+        var telefon = document.getElementById('telefonInput').value.trim();
+        var email = document.getElementById('emailInput').value.trim();
+
+        var idx = document.getElementById('konobarIndex').value;
+        var konobarId = (idx !== "" && konobari[idx]) ? konobari[idx].idKonobar : null;
+
+        var konobar = {
+            ime: document.getElementById('imeInput').value.trim(),
+            prezime: document.getElementById('prezimeInput').value.trim(),
+            telefon: telefon,
+            email: email,
+            aktivan: document.getElementById('aktivanInput').checked
+        };
+
+        if (konobarId) {
+            konobar.idKonobar = konobarId;
+        }
+
+        var isEdit = !!konobarId;
+        var url = isEdit ? `/api/konobar/${konobarId}` : '/api/konobar';
+        var method = isEdit ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(konobar)
+        })
+            .then(resp => {
+                if (!resp.ok) {
+                    return resp.json().then(err => {
+                        throw new Error(JSON.stringify(err));
+                    });
+                }
+
+                if (resp.status === 204) {
+                    document.getElementById('konobarValidationMsg').innerText = 'Konobar uspješno spremljen.';
+                    document.getElementById('konobarValidationMsg').className = 'text-success mb-2';
+                    editMode = false;
+                    setReadonly(true);
+                    setTimeout(() => location.reload(), 1500);
+                    return;
+                }
+
+                return resp.json();
+            })
+            .then(data => {
+                if (data) {
+                    document.getElementById('konobarValidationMsg').innerText = 'Konobar uspješno spremljen.';
+                    document.getElementById('konobarValidationMsg').className = 'text-success mb-2';
+                    editMode = false;
+                    setReadonly(true);
+                    setTimeout(() => location.reload(), 1500);
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                var errorMessage = 'Greška pri spremanju konobara.';
+
+                try {
+                    var errorObj = JSON.parse(err.message);
+                    if (errorObj.errors) {
+                        var messages = [];
+                        for (var field in errorObj.errors) {
+                            if (errorObj.errors[field] && Array.isArray(errorObj.errors[field])) {
+                                messages.push(...errorObj.errors[field]);
+                            }
+                        }
+                        errorMessage = messages.join(' ');
+                    }
+                } catch (e) {
+                    errorMessage = err.message;
+                }
+
+                document.getElementById('konobarValidationMsg').innerText = errorMessage;
+                document.getElementById('konobarValidationMsg').className = 'text-danger mb-2';
+            });
+    }
+
+
+    function deleteKonobar() {
+        var idx = document.getElementById('konobarIndex').value;
+        if (idx === "" || !konobari[idx] || !konobari[idx].idKonobar) {
+            document.getElementById('konobarValidationMsg').innerText = 'Nije odabran konobar za brisanje.';
+            document.getElementById('konobarValidationMsg').className = 'text-danger mb-2';
+            return;
+        }
+        var konobarId = konobari[idx].idKonobar;
+        if (confirm('Jeste li sigurni da želite obrisati ovog konobara?')) {
+            fetch(`/api/konobar/${konobarId}`, {
+                method: 'DELETE'
+            })
+                .then(resp => {
+                    if (!resp.ok) throw new Error('Greška pri brisanju konobara.');
+                    document.getElementById('konobarValidationMsg').innerText = 'Konobar uspješno obrisan.';
+                    document.getElementById('konobarValidationMsg').className = 'text-success mb-2';
+                    setTimeout(() => location.reload(), 1000);
+                })
+                .catch(err => {
+                    document.getElementById('konobarValidationMsg').innerText = err.message || 'Greška pri brisanju konobara.';
+                    document.getElementById('konobarValidationMsg').className = 'text-danger mb-2';
+                });
+        }
+    }
+
+    function showCreateForm() {
+        currentIndex = null;
+        editMode = true;
+        document.getElementById('konobarForm').reset();
+        document.getElementById('aktivanInput').checked = true;
+
+        document.getElementById('konobarIndex').value = null;
+
+        setReadonly(false);
+        document.getElementById('detailForm').style.display = '';
+        document.getElementById('noSelection').style.display = 'none';
+        document.getElementById('konobarValidationMsg').innerText = '';
+
+        document.querySelectorAll('.konobar-item').forEach(item => item.classList.remove('active'));
+    }
+
+</script>
+}

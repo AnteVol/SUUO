@@ -26,12 +26,12 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\antev\Documents\Fakultet\Fakultet 4. godina\2. semestar\Informacijski sustavi\SUUO\DZ3\SUUO_DZ3
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/antev/Documents/Fakultet/Fakultet 4. godina/2. semestar/Informacijski sustavi/SUUO/DZ3/SUUO_DZ3/Views/Home/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+[C:/Users/antev/Documents/Fakultet/Fakultet 4. godina/2. semestar/Informacijski sustavi/SUUO/DZ3/SUUO_DZ3/Views/Home/Konobari.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxLb25vYmFyaS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/antev/Documents/Fakultet/Fakultet 4. godina/2. semestar/Informacijski sustavi/SUUO/DZ3/SUUO_DZ3/Views/Home/Privacy.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+[C:/Users/antev/Documents/Fakultet/Fakultet 4. godina/2. semestar/Informacijski sustavi/SUUO/DZ3/SUUO_DZ3/Views/Home/Narudzbe.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxOYXJ1ZHpiZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/antev/Documents/Fakultet/Fakultet 4. godina/2. semestar/Informacijski sustavi/SUUO/DZ3/SUUO_DZ3/Views/Shared/Error.cshtml]
