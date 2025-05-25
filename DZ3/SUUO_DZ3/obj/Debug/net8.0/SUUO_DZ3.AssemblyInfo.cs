@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SUUO_DZ3")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+14ae3061237b155eb776bcb8aac9f3e8a1d06737")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0d203883262b04bcf1420a71cfa90e02999c77b8")]
 [assembly: System.Reflection.AssemblyProductAttribute("SUUO_DZ3")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SUUO_DZ3")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
