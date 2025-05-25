@@ -9,6 +9,8 @@ public class StavkaNarudzbe
     
     public Guid NarudzbaId { get; set; }
     
+    public Narudzba? Narudzba { get; set; }
+    
     public Guid? KuharId { get; set; }
     
     public Kuhar? Kuhar { get; set; }

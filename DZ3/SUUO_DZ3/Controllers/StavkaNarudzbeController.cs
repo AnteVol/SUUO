@@ -47,16 +47,26 @@ public class StavkaNarudzbeController : ControllerBase
         if (stavka == null)
             return BadRequest();
         
-        Console.Write(stavka.Naziv);
+        Console.WriteLine($"[CREATE] Stavka: {stavka.Naziv}, NarudzbaId: {stavka.NarudzbaId}, Kolicina: {stavka.Kolicina}, Cijena: {stavka.Cijena}");
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         stavka.StavkaNarudzbeId = Guid.NewGuid();
         _context.StavkeNarudzbe.Add(stavka);
-        await _context.SaveChangesAsync();
+        var count = await _context.SaveChangesAsync();
+        
+        Console.WriteLine($"[CREATE] Stavka spremljena: {count} zapis(a)");
 
-        return CreatedAtAction(nameof(GetById), new { id = stavka.StavkaNarudzbeId }, stavka);
+        return CreatedAtAction(nameof(GetById), new { id = stavka.StavkaNarudzbeId }, new
+        {
+            stavka.StavkaNarudzbeId,
+            stavka.Naziv,
+            stavka.Kolicina,
+            stavka.Cijena,
+            stavka.NarudzbaId
+        });
+        
     }
 
     // PUT: api/stavkanarudzbe/{id}
