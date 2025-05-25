@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using SUUO_DZ3.Data;
 using SUUO_DZ3.Models;
-using SUUO_DZ3.Models.Enums;
 
 namespace SUUO_DZ3.Controllers;
 
@@ -19,9 +18,25 @@ public class StavkaNarudzbeController : ControllerBase
 
     // GET: api/stavkanarudzbe
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] Guid? narudzbaId = null)
+    {
+        IQueryable<StavkaNarudzbe> query = _context.StavkeNarudzbe;
+        
+        if (narudzbaId.HasValue)
+        {
+            query = query.Where(s => s.NarudzbaId == narudzbaId.Value);
+        }
+
+        var stavke = await query.ToListAsync();
+        return Ok(stavke);
+    }
+
+    // GET: api/stavkanarudzbe/narudzba/{narudzbaId}
+    [HttpGet("narudzba/{narudzbaId}")]
+    public async Task<IActionResult> GetByNarudzbaId(Guid narudzbaId)
     {
         var stavke = await _context.StavkeNarudzbe
+            .Where(s => s.NarudzbaId == narudzbaId)
             .ToListAsync();
 
         return Ok(stavke);
@@ -45,16 +60,40 @@ public class StavkaNarudzbeController : ControllerBase
     public async Task<IActionResult> Create([FromBody] StavkaNarudzbe stavka)
     {
         if (stavka == null)
-            return BadRequest();
-        
-        Console.Write(stavka.Naziv);
+            return BadRequest("Stavka ne može biti null");
+
+        Console.WriteLine($"Primljena stavka: {stavka.Naziv}");
 
         if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Where(x => x.Value.Errors.Count > 0)
+                .Select(x => new { Field = x.Key, Errors = x.Value.Errors.Select(e => e.ErrorMessage) })
+                .ToArray();
+            
+            Console.WriteLine($"Model validation errors: {string.Join(", ", errors.Select(e => $"{e.Field}: {string.Join(", ", e.Errors)}"))}");
             return BadRequest(ModelState);
+        }
+
+        var narudzbaExists = await _context.Narudzbe.AnyAsync(n => n.NarudzbaId == stavka.NarudzbaId);
+        if (!narudzbaExists)
+        {
+            return BadRequest("Narudžba s danim ID-om ne postoji");
+        }
 
         stavka.StavkaNarudzbeId = Guid.NewGuid();
         _context.StavkeNarudzbe.Add(stavka);
-        await _context.SaveChangesAsync();
+        
+        try
+        {
+            await _context.SaveChangesAsync();
+            Console.WriteLine($"Stavka uspješno kreirana s ID: {stavka.StavkaNarudzbeId}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Greška pri spremanju stavke: {ex.Message}");
+            return StatusCode(500, "Greška pri spremanju stavke u bazu podataka");
+        }
 
         return CreatedAtAction(nameof(GetById), new { id = stavka.StavkaNarudzbeId }, stavka);
     }
@@ -64,7 +103,7 @@ public class StavkaNarudzbeController : ControllerBase
     public async Task<IActionResult> Update(Guid id, [FromBody] StavkaNarudzbe stavka)
     {
         if (stavka == null || id != stavka.StavkaNarudzbeId)
-            return BadRequest();
+            return BadRequest("ID ne odgovara ili je stavka null");
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -99,9 +138,11 @@ public class StavkaNarudzbeController : ControllerBase
         try
         {
             await _context.SaveChangesAsync();
+            Console.WriteLine($"Stavka {id} uspješno obrisana");
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException ex)
         {
+            Console.WriteLine($"Greška pri brisanju stavke {id}: {ex.Message}");
             return Conflict("Ne može se obrisati stavka jer je povezana s drugim entitetima.");
         }
 

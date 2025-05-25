@@ -30,7 +30,7 @@
                 <input type="hidden" id="narudzbaIndex"/>
                 <div class="card mb-3">
                     <div class="card-header">
-                        <h5 class="mb-0">Osnovni podaci narudžbe</h5>
+                        <h5 class="mb-0">Podaci narudžbe</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -491,10 +491,11 @@
             var rows = document.querySelectorAll('#stavkeTable tbody tr');
 
             for (var i = 0; i < rows.length; i++) {
-                var naziv = rows[i].querySelector('.stavka-naziv').value;
+                var naziv = rows[i].querySelector('.stavka-naziv').value.trim();
                 var kolicina = parseInt(rows[i].querySelector('.stavka-kolicina').value) || 0;
                 var cijena = parseFloat(rows[i].querySelector('.stavka-cijena').value) || 0;
-                var akcija = rows[i].querySelector('.stavka-akcija').checked ? 1 : 0;
+                var akcija = rows[i].querySelector('.stavka-akcija').checked;
+                var status = rows[i].querySelector('.stavka-status').value;
                 var stavkaId = rows[i].getAttribute('data-stavka-id');
 
                 if (!stavkaId || stavkaId === '' || stavkaId === 'null' || stavkaId === 'undefined') {
@@ -512,7 +513,7 @@
                     naziv: naziv,
                     kolicina: kolicina,
                     cijena: cijena,
-                    status: rows[i].querySelector('.stavka-status').value,
+                    status: status || "NaCekanju",
                     akcija: akcija
                 });
             }
@@ -532,60 +533,88 @@
                 return;
             }
 
-            var operations = [];
+            console.log('Počinje spremanje stavki za narudžbu:', narudzba.narudzbaId);
 
-            operations.push(
-                fetch(`api/stavkanarudzbe?narudzbaId=${narudzba.narudzbaId}`)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Greška pri dohvaćanju postojećih stavki');
-                        return response.json();
-                    })
-                    .then(postojeceStavke => {
-                        var deleteOperations = [];
-                        postojeceStavke.forEach(stavka => {
-                            deleteOperations.push(
-                                fetch(`api/stavkanarudzbe/${stavka.stavkaNarudzbeId}`, {
-                                    method: 'DELETE'
-                                })
-                            );
+            fetch(`api/stavkanarudzbe/narudzba/${narudzba.narudzbaId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: Greška pri dohvaćanju postojećih stavki`);
+                    }
+                    return response.json();
+                })
+                .then(postojeceStavke => {
+                    console.log('Dohvaćene postojeće stavke:', postojeceStavke);
+
+                    var deletePromises = postojeceStavke.map(stavka => {
+                        return fetch(`api/stavkanarudzbe/${stavka.stavkaNarudzbeId}`, {
+                            method: 'DELETE'
+                        }).then(response => {
+                            if (!response.ok) {
+                                throw new Error(`Greška pri brisanju stavke ${stavka.stavkaNarudzbeId}`);
+                            }
+                            return response;
                         });
+                    });
 
-                        return Promise.all(deleteOperations);
-                    })
-                    .then(() => {
-                        var createOperations = [];
-
-                        currentStavke.forEach(stavka => {
-                            var mappedStavka = {
-                                NarudzbaId: narudzba.narudzbaId,
-                                KuharId: null,
-                                Naziv: stavka.naziv,
-                                Kolicina: stavka.kolicina,
-                                Cijena: stavka.cijena,
-                                AkcijskaPonuda: stavka.akcija === 1,
-                                Status: stavka.status || "NaCekanju"
-                            };
-
-                            createOperations.push(
-                                fetch('api/stavkanarudzbe', {
-                                    method: 'POST',
-                                    headers: {'Content-Type': 'application/json'},
-                                    body: JSON.stringify(mappedStavka)
-                                })
-                            );
-                        });
-
-                        return Promise.all(createOperations);
-                    })
-            );
-
-            Promise.all(operations)
+                    return Promise.all(deletePromises);
+                })
                 .then(() => {
+                    console.log('Postojeće stavke obrisane, kreiranje novih...');
+
+                    var createPromises = currentStavke.map(stavka => {
+                        var mappedStavka = {
+                            NarudzbaId: narudzba.narudzbaId,
+                            KuharId: null,
+                            Naziv: stavka.naziv,
+                            Kolicina: stavka.kolicina,
+                            Cijena: stavka.cijena,
+                            AkcijskaPonuda: stavka.akcija,
+                            Status: stavka.status
+                        };
+
+                        console.log('Šalje se stavka:', mappedStavka);
+
+                        return fetch('api/stavkanarudzbe', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(mappedStavka)
+                        }).then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error(`HTTP ${response.status}: ${text}`);
+                                });
+                            }
+                            return response.json();
+                        });
+                    });
+
+                    return Promise.all(createPromises);
+                })
+                .then(createdStavke => {
+                    console.log('Sve stavke uspješno stvorene:', createdStavke);
+
                     document.getElementById('stavkeValidationMsg').innerText = 'Stavke uspješno spremljene.';
                     document.getElementById('stavkeValidationMsg').className = 'text-success mt-2';
-                    stavkeEditMode = false;
-                    setStavkeReadonly(true);
-                    localStorage.setItem('stavkeNarudzbi', JSON.stringify(currentStavke))
+
+                    if (typeof stavkeEditMode !== 'undefined') {
+                        stavkeEditMode = false;
+                    }
+                    if (typeof setStavkeReadonly === 'function') {
+                        setStavkeReadonly(true);
+                    }
+
+                    var stavkeForStorage = currentStavke.map(stavka => ({
+                        ...stavka,
+                        stavkaId: null
+                    }));
+
+                    try {
+                        localStorage.setItem('stavkeNarudzbi', JSON.stringify(stavkeForStorage));
+                    } catch (e) {
+                        console.warn('Greška pri spremanju u localStorage:', e);
+                    }
                 })
                 .catch(err => {
                     console.error('Greška pri spremanju stavki:', err);
@@ -663,22 +692,22 @@
                 }).join('');
 
                 row.innerHTML = `
-            <td><input class="form-control form-control-sm stavka-naziv" value="${s.naziv || ''}" /></td>
-            <td><input type="number" min="1" class="form-control form-control-sm stavka-kolicina" value="${s.kolicina || 1}" /></td>
-            <td><input type="number" min="0" step="0.01" class="form-control form-control-sm stavka-cijena" value="${s.cijena || 0}" /></td>
-            <td>
-                <select class="form-control form-control-sm stavka-status">
-                    ${statusOptions}
-                </select>
-            </td>
-            <td class="text-center">
-                <input type="checkbox" class="form-check-input stavka-akcija" ${(s.akcija == 1 || s.akcija === true) ? 'checked' : ''} />
-            </td>
-            <td class="text-center ukloni-cell">
-                <button type="button" class="btn btn-danger btn-sm" onclick="removeStavka(this)" title="Ukloni stavku">
-                    <i class="fas fa-times"></i>
-                </button>
-            </td>`;
+                <td><input class="form-control form-control-sm stavka-naziv" value="${s.naziv || ''}" /></td>
+                <td><input type="number" min="1" class="form-control form-control-sm stavka-kolicina" value="${s.kolicina || 1}" /></td>
+                <td><input type="number" min="0" step="0.01" class="form-control form-control-sm stavka-cijena" value="${s.cijena || 0}" /></td>
+                <td>
+                    <select class="form-control form-control-sm stavka-status">
+                        ${statusOptions}
+                    </select>
+                </td>
+                <td class="text-center">
+                    <input type="checkbox" class="form-check-input stavka-akcija" ${(s.akcija == 1 || s.akcija === true) ? 'checked' : ''} />
+                </td>
+                <td class="text-center ukloni-cell">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeStavka(this)" title="Ukloni stavku">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>`;
 
                 tbody.appendChild(row);
             });
@@ -689,24 +718,24 @@
             var row = document.createElement('tr');
             row.setAttribute('data-stavka-id', '');
             row.innerHTML = `
-        <td><input class="form-control form-control-sm stavka-naziv" placeholder="Naziv stavke" /></td>
-        <td><input type="number" min="1" class="form-control form-control-sm stavka-kolicina" value="1" /></td>
-        <td><input type="number" min="0" step="0.01" class="form-control form-control-sm stavka-cijena" value="0" placeholder="0.00" /></td>
-        <td>
-            <select class="form-control form-control-sm stavka-status">
-                <option value="NaCekanju" selected>Na Čekanju</option>
-                <option value="UPripremi">U Pripremi</option>
-                <option value="Pripremljeno">Pripremljeno</option>
-            </select>
-        </td>
-        <td class="text-center">
-            <input type="checkbox" class="form-check-input stavka-akcija" />
-        </td>
-        <td class="text-center ukloni-cell">
-            <button type="button" class="btn btn-danger btn-sm" onclick="removeStavka(this)" title="Ukloni stavku">
-                <i class="fas fa-times"></i>
-            </button>
-        </td>`;
+            <td><input class="form-control form-control-sm stavka-naziv" placeholder="Naziv stavke" /></td>
+            <td><input type="number" min="1" class="form-control form-control-sm stavka-kolicina" value="1" /></td>
+            <td><input type="number" min="0" step="0.01" class="form-control form-control-sm stavka-cijena" value="0" placeholder="0.00" /></td>
+            <td>
+                <select class="form-control form-control-sm stavka-status">
+                    <option value="NaCekanju" selected>Na Čekanju</option>
+                    <option value="UPripremi">U Pripremi</option>
+                    <option value="Pripremljeno">Pripremljeno</option>
+                </select>
+            </td>
+            <td class="text-center">
+                <input type="checkbox" class="form-check-input stavka-akcija" />
+            </td>
+            <td class="text-center ukloni-cell">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeStavka(this)" title="Ukloni stavku">
+                    <i class="fas fa-times"></i>
+                </button>
+            </td>`;
             tbody.appendChild(row);
         }
 
